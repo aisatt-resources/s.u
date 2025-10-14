@@ -39,7 +39,10 @@
 - **ポイント:**
   - 売上マスタの検索
 - **スクリーンショット:**  
+  - 売上検索画面
   ![売上検索画面](docs/images/Sales_System_Search.png)
+  - 商品注文画面
+  ![商品注文画面](docs/images/Sales_System_Top.png)
 ---
  
 ## 🔹 今後取り組みたいこと  
