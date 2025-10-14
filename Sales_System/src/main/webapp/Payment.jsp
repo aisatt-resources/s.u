@@ -42,11 +42,10 @@
 				<div class="row justify-content-center border border-dotted"
 					id="item<%=i%>"
 					style="border: 2px solid black; margin: 10px; padding: 10px;">
-					<!-- 画像 --> 
+					<!-- 画像 -->
 					<div class="col-md-2 form-group">
-						<a href="OrderServlet?item_cd=<%=i%>"
-							style="text-align: center;"><img src=""
-							alt="リンク切れ" width="100" height="100" id="image<%=i%>">
+						<a href="OrderServlet?item_cd=<%=i%>" style="text-align: center;"><img
+							src="" alt="リンク切れ" width="100" height="100" id="image<%=i%>">
 						</a>
 					</div>
 					<!-- 詳細 -->
@@ -149,8 +148,8 @@
 		Total_element.innerHTML = Total;
 
 		//セッションに保存されているデータを削除
-		for (let i = 1; i <= 4; i++) {
-			function deleteItemInfo() {
+		function deleteItemInfo() {
+			for (let i = 1; i <= 4; i++) {
 				sessionStorage.removeItem('quantity:' + i);
 				sessionStorage.removeItem('item_name:' + i);
 				sessionStorage.removeItem('item_cd:' + i);
