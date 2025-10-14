@@ -199,7 +199,7 @@
 						<td colspan="3">
 							<%
 							for (int i = 0; i < orderinfo.getRow_No(); i++) {
-							%> <!-- 注文行番号 --> <%=orderinfo.getRow_No()%> <!-- 商品番号 --> <%=orderinfo.getItem_Cd()%>、
+							%> <!-- 注文行番号 --> <%=i+1%> <!-- 商品番号 --> <%=orderinfo.getItem_Cd()%>、
 							<!-- 商品名 --> <%=orderinfo.getItem_Name()%>、 <!-- 単価 --> ￥<%=orderinfo.getUnit_Price()%>、
 							<!-- 数量 --> <%=orderinfo.getQuantity()%>個 <!-- 小計 --> 小計：￥<%=orderinfo.getSubtotal()%>
 							<br> 

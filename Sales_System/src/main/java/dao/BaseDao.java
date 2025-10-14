@@ -38,7 +38,7 @@ public abstract class BaseDao {
 				//接続DB名、ユーザ名、パスワードは各環境に合わせて設定
 				String url  = "jdbc:mysql://localhost/Sales_System";
 				String user = "root";
-				String password = "";
+				String password = "07kICVo0!";
 				// DB接続
 				con = DriverManager.getConnection(url, user, password);
 			}

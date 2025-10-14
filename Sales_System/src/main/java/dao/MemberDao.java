@@ -162,19 +162,19 @@ public class MemberDao extends BaseDao {
 					+ "INNER JOIN order_detail ON `order`.order_no = order_detail.order_no "
 					+ "INNER JOIN `member` ON `order`.member_id = `member`.user_id "
 					+ "INNER JOIN m_item ON order_detail.item_cd = m_item.item_cd "
-					+ "WHERE "
-					+ date_term + " AND "
-					+ member_id_term + " AND "
-					+ payment_method_term + " AND "
-					+ delivery_date_flag_term + " AND "
-					+ item_cd_term;
-			
-			// SQL文の内容をコンソールで確認
-			System.out.println(sql); 
+					+ "WHERE ? AND ? AND ? AND ? AND ?";
 			
 			// 検索の実行
 			ps = con.prepareStatement(sql);
+			ps.setString(1, date_term);
+			ps.setString(2, member_id_term);
+			ps.setString(3, payment_method_term);
+			ps.setString(4, delivery_date_flag_term);
+			ps.setString(5, item_cd_term);
 			rs = ps.executeQuery();
+			
+			// SQL文の内容をコンソールで確認
+			System.out.println(sql); 
 
 			// 検索結果から会員情報の各項目を取得してリストに格納
 			while (rs.next()) {

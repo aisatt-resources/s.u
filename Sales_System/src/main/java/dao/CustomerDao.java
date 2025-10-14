@@ -126,34 +126,25 @@ public class CustomerDao extends BaseDao {
 				System.out.println(item_cd_list[i]);
 			}
 
-			//orderテーブルにデータ登録するSQL文
-			sql = "INSERT INTO `order` (order_no, member_id, order_date, "
-					+ "payment_method, delivery_date, remarks, "
-					+ "regist_datetime) VALUES (?,?,?,?,?,?,?)";
-			//orderテーブルに注文番号、支払方法、備考を登録
-			ps = con.prepareStatement(sql);
-			ps.setInt(1, order_no);
-			ps.setString(2, member_id);
-			ps.setString(3, order_date);
-			ps.setString(4, payment_method);
-			ps.setString(5, delivery_date);
-			ps.setString(6, remarks);
-			ps.setString(7, regist_datetime);
-			ps.executeUpdate();
-
 			//税抜金額
 			int[] amount = new int[4];
+
+			//合計金額
+			int total_amount = 0;
+
 			//税抜販売価格
 			int[] price = new int[4];
+			
 			//注文行番号
 			int row_no = 1;
 
 			for (int i = 0; i < 4; i++) {
-				
-				if(quantity_list[i]==null) {
+
+				//購入個数が0個のものは飛ばす。
+				if (quantity_list[i] == null) {
 					continue;
 				}
-				
+
 				//金額を取得
 				sql = "SELECT price FROM m_item WHERE item_cd=?";
 				ps = con.prepareStatement(sql);
@@ -173,6 +164,9 @@ public class CustomerDao extends BaseDao {
 				//税抜金額
 				amount[i] = price[i] * Integer.parseInt(quantity_list[i]);
 
+				//合計金額
+				total_amount += amount[i];
+
 				//order_detailテーブルにデータ登録するSQL文
 				sql = "INSERT INTO order_detail (order_no, row_no, item_cd, quantity, amount) VALUES (?,?,?,?,?)";
 
@@ -184,10 +178,26 @@ public class CustomerDao extends BaseDao {
 				ps.setString(4, quantity_list[i]);
 				ps.setInt(5, amount[i]);
 				ps.executeUpdate();
-				
+
 				row_no++;
 
 			}
+
+			//orderテーブルにデータ登録するSQL文
+			sql = "INSERT INTO `order` (order_no, member_id, order_date, total_amount, "
+					+ "payment_method, delivery_date, remarks, "
+					+ "regist_datetime) VALUES (?,?,?,?,?,?,?,?)";
+			//orderテーブルに注文番号、支払方法、備考を登録
+			ps = con.prepareStatement(sql);
+			ps.setInt(1, order_no);
+			ps.setString(2, member_id);
+			ps.setString(3, order_date);
+			ps.setInt(4, total_amount);
+			ps.setString(5, payment_method);
+			ps.setString(6, delivery_date);
+			ps.setString(7, remarks);
+			ps.setString(8, regist_datetime);
+			ps.executeUpdate();
 
 		} catch (SQLException e) {
 			e.printStackTrace();
