@@ -29,7 +29,7 @@ public class SearchServlet extends HttpServlet {
 		String order_date_end = request.getParameter("order_date_end");
 		String member_id = request.getParameter("member_id");
 		String payment_method = request.getParameter("payment_method");
-		String regist_flag = request.getParameter("regist_flag");
+		String delivery_date_flag = request.getParameter("delivery_date_flag");
 		String item_cd = request.getParameter("item_cd");
 		
 		String nextPage = null;
@@ -39,10 +39,10 @@ public class SearchServlet extends HttpServlet {
 			MemberDao memberDao = new MemberDao();
 			SalesInformation orderinfo = 
 				new	SalesInformation(order_date_start, order_date_end, member_id,
-							payment_method, regist_flag, item_cd);
+							payment_method, delivery_date_flag, item_cd);
 			
 			// 入力された商品コードから商品名を検索して取得
-			String item_name = memberDao.findUser_Name(orderinfo);
+			String item_name = memberDao.findItem_Name(orderinfo);
 			
 			// 取得した検索結果（注文情報）をリストに格納
 			List<SalesInformation> orderList = memberDao.findOrders(orderinfo);

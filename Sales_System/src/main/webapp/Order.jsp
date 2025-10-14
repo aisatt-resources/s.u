@@ -22,7 +22,7 @@
 		<%
 		} else {
 		%>
-		<form action="RegisterServlet" method="post">
+		<form action="OrderServlet" method="post">
 			<!-- 商品陳列部分 -->
 			<div style="text-align: center;">
 				<!-- 画像 -->
@@ -58,7 +58,6 @@
 	  const price = <%=request.getAttribute("price")%>;
 	  const subTotal_element = document.getElementById('subTotal');
 	  const item_name = document.getElementById('item_name').textContent;
-	  //サーブレットから取得した商品コードを変数に格納
 	  const item_cd = <%=request.getAttribute("item_cd")%>;
 	  
 	//ボタンが押されたら減算
@@ -82,9 +81,13 @@
 	  // 商品コードと購入数量をセッションに保存
 	  function addItem(){
 		  const quantity = quantity_element.value;
+		  //数量
 		  sessionStorage.setItem('quantity:'+item_cd, quantity);
+		  //商品名
 		  sessionStorage.setItem('item_name:'+item_cd, item_name);
+		  //商品コード
 		  sessionStorage.setItem('item_cd:'+item_cd, item_cd);
+		  //単価
 		  sessionStorage.setItem('price:'+item_cd, price);
 		  
 	  }

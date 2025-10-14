@@ -1,6 +1,7 @@
 package model;
 
 import java.sql.Timestamp;
+
 /**
  * 注文情報クラス
  */
@@ -10,9 +11,20 @@ public class SalesInformation {
 	private String order_date_end; // 注文日付（to）
 	private String member_id; // 会員ID
 	private String payment_method; // 支払方法	
-	private String regist_flag; // 登録or未登録判定
+	private String delivery_date_flag; // 登録or未登録判定
 	private String item_cd; // 商品コード
-	
+	private String order_no; //注文番号
+	private Timestamp order_date; //注文日
+	private String user_name; //会員名
+	private String total_amount; //税抜合計金額
+	private String delivery_date; //納品日
+	private String remarks; //備考
+	private int row_no; // 注文行番号
+	private String item_name; // 商品名
+	private String unit_price; // 税抜単価
+	private String quantity; // 数量
+	private String subtotal; // 小計
+
 	/**
 	 * コンストラクタ
 	 * @param order_date_start
@@ -24,26 +36,16 @@ public class SalesInformation {
 	 */
 	public SalesInformation(String order_date_start, String order_date_end,
 			String member_id, String payment_method,
-			String regist_flag, String item_cd) {
+			String delivery_date_flag, String item_cd) {
 		this.order_date_start = order_date_start;
 		this.order_date_end = order_date_end;
 		this.member_id = member_id;
 		this.payment_method = payment_method;
-		this.regist_flag = regist_flag;
+		this.delivery_date_flag = delivery_date_flag;
 		this.item_cd = item_cd;
 	}
 
-	private String order_no; //注文番号
-	private Timestamp order_date; //注文日
-	private String user_name; //会員名
-	private String total_amount; //税抜合計金額
-	private String regist_datetime; //納品日
-	private String remarks; //備考
-	private int row_no; // 注文行番号
-	private String item_name; // 商品名
-	private String unit_price; // 税抜単価
-	private String quantity; // 数量
-	private String subtotal; // 小計
+
 
 	/**
 	 * コンストラクタ
@@ -62,17 +64,17 @@ public class SalesInformation {
 	 * @param quantity
 	 * @param subtotal
 	 */
-	public SalesInformation(String order_no, Timestamp order_date,String member_id, 
-			String user_name,String payment_method, String total_amount, 
-			String regist_datetime, String remarks, int row_no, String item_cd,
-			String item_name, String unit_price ,String quantity, String subtotal) {
+	public SalesInformation(String order_no, Timestamp order_date, String member_id,
+			String user_name, String payment_method, String total_amount,
+			String delivery_date, String remarks, int row_no, String item_cd,
+			String item_name, String unit_price, String quantity, String subtotal) {
 		this.order_no = order_no;
 		this.order_date = order_date;
 		this.member_id = member_id;
 		this.user_name = user_name;
 		this.payment_method = payment_method;
 		this.total_amount = total_amount;
-		this.regist_datetime = regist_datetime;
+		this.delivery_date = delivery_date;
 		this.remarks = remarks;
 		this.row_no = row_no;
 		this.item_cd = item_cd;
@@ -151,16 +153,16 @@ public class SalesInformation {
 	 * 登録or未登録判定を返却
 	 * @return regist_flag
 	 */
-	public String getRegist_Flag() {
-		return regist_flag;
+	public String getDelivery_Date_Flag() {
+		return delivery_date_flag;
 	}
 
 	/**
 	 * 登録or未登録判定をセット
 	 * @param regist_flag
 	 */
-	public void setRegist_Flag(String regist_flag) {
-		this.regist_flag = regist_flag;
+	public void setDelivery_Date_Flag(String delivery_date_flag) {
+		this.delivery_date_flag = delivery_date_flag;
 	}
 
 	/**
@@ -247,16 +249,16 @@ public class SalesInformation {
 	 * 納品日を返却
 	 * @return regist_datetime
 	 */
-	public String getRegist_Datetime() {
-		return regist_datetime;
+	public String getDelivery_Date() {
+		return delivery_date;
 	}
 
 	/**
 	 * 納品日をセット
 	 * @param regist_datetime
 	 */
-	public void setRegist_Datetime(String regist_datetime) {
-		this.regist_datetime = regist_datetime;
+	public void setDelivery_Date(String delivery_date) {
+		this.delivery_date = delivery_date;
 	}
 
 	/**
@@ -274,7 +276,7 @@ public class SalesInformation {
 	public void setRemarks(String remarks) {
 		this.remarks = remarks;
 	}
-	
+
 	/**
 	 * 注文行番号を返却
 	 * @return row_no
@@ -290,7 +292,7 @@ public class SalesInformation {
 	public void setRow_No(int row_no) {
 		this.row_no = row_no;
 	}
-	
+
 	/**
 	 * 商品名を返却
 	 * @return item_name
@@ -306,7 +308,7 @@ public class SalesInformation {
 	public void setItem_Name(String item_name) {
 		this.item_name = item_name;
 	}
-	
+
 	/**
 	 * 税抜単価を返却
 	 * @return unit_price
@@ -322,7 +324,7 @@ public class SalesInformation {
 	public void setUnit_Price(String unit_price) {
 		this.unit_price = unit_price;
 	}
-	
+
 	/**
 	 * 数量を返却
 	 * @return quantity
@@ -338,7 +340,7 @@ public class SalesInformation {
 	public void setQuantity(String quantity) {
 		this.quantity = quantity;
 	}
-	
+
 	/**
 	 * 小計を返却
 	 * @return subtotal
@@ -354,5 +356,5 @@ public class SalesInformation {
 	public void setSubtotal(String subtotal) {
 		this.subtotal = subtotal;
 	}
-	
+
 }

@@ -20,13 +20,13 @@ public class MemberDao extends BaseDao {
 		super();
 	}
 	
-	public String findUser_Name(SalesInformation salesinfo) throws SalesSystemException {
+	public String findItem_Name(SalesInformation salesinfo) throws SalesSystemException {
 		
 		// 商品名を格納する変数
 		String item_name = null;
 		
 		// 入力された商品コードを変数に格納
-		String item_cd = salesinfo.getItem_Cd();;
+		String item_cd = salesinfo.getItem_Cd();
 		
 		try {
 			// SQL文
@@ -67,7 +67,7 @@ public class MemberDao extends BaseDao {
 		String order_date_end = salesinfo.getOrder_Date_End();
 		String member_id = salesinfo.getMember_Id();
 		String payment_method = salesinfo.getPayment_Method();
-		String regist_flag = salesinfo.getRegist_Flag();
+		String delivery_date_flag = salesinfo.getDelivery_Date_Flag();
 		String item_cd = salesinfo.getItem_Cd();
 
 		// SQL文の条件式を格納する変数
@@ -75,7 +75,7 @@ public class MemberDao extends BaseDao {
 		String date_term = "(order_date LIKE '%')";
 		String member_id_term = "(member_id LIKE '%')";
 		String payment_method_term = "(payment_method LIKE '%')";
-		String regist_flag_term = "(regist_date LIKE '%')";
+		String delivery_date_flag_term = "(delivery_date LIKE '%')";
 		String item_cd_term = "(order_detail.item_cd LIKE '%')";
 		
 		// 【エラーチェック】入力値をコンソールで確認
@@ -83,7 +83,7 @@ public class MemberDao extends BaseDao {
 		System.out.println("終了日："+order_date_end);
 		System.out.println("会員ID："+member_id);
 		System.out.println("支払方法："+payment_method);
-		System.out.println("登録日："+regist_flag);
+		System.out.println("納品済or未納："+delivery_date_flag);
 		System.out.println("商品コード："+item_cd);
 		
 		// 入力された値に応じて分岐処理
@@ -134,13 +134,13 @@ public class MemberDao extends BaseDao {
 
 			// 登録or未登録判定
 			// m_itemテーブル
-			if (regist_flag.equals("未納品")) {
+			if (delivery_date_flag.equals("未納品")) {
 
-				regist_flag_term = "regist_date IS NULL";
+				delivery_date_flag_term = "delivery_date IS NULL";
 
-			} else if (regist_flag.equals("納品済")) {
+			} else if (delivery_date_flag.equals("納品済")) {
 
-				regist_flag_term = "regist_date IS NOT NULL";
+				delivery_date_flag_term = "delivery_date IS NOT NULL";
 
 			} else {
 
@@ -166,7 +166,7 @@ public class MemberDao extends BaseDao {
 					+ date_term + " AND "
 					+ member_id_term + " AND "
 					+ payment_method_term + " AND "
-					+ regist_flag_term + " AND "
+					+ delivery_date_flag_term + " AND "
 					+ item_cd_term;
 			
 			// SQL文の内容をコンソールで確認
@@ -185,17 +185,17 @@ public class MemberDao extends BaseDao {
 				String user_name_value = rs.getString("user_name"); //会員名 memberテーブル
 				String payment_method_value = rs.getString("payment_method"); //支払方法 orderテーブル
 				String total_amount_value = rs.getString("total_amount"); //税込合計金額 orderテーブル
-				String regist_datetime_value = rs.getString("regist_datetime"); //納品 m_itemテーブル
+				String delivery_date_value = rs.getString("delivery_date"); //納品済or未納 m_itemテーブル
 				String remarks_value = rs.getString("remarks"); //備考 orderテーブル
-				int row_no_value = rs.getInt("row_no");
-				String item_cd_value = rs.getString("item_cd");
-				String item_name_value = rs.getString("item_name");
-				String unit_price_value = rs.getString("unit_price");
-				String quantity_value = rs.getString("quantity");
-				String subtotal_value = rs.getString("subtotal");
+				int row_no_value = rs.getInt("row_no"); //注文行
+				String item_cd_value = rs.getString("item_cd"); //商品コード
+				String item_name_value = rs.getString("item_name"); //商品名
+				String unit_price_value = rs.getString("unit_price"); //単価
+				String quantity_value = rs.getString("quantity"); //数量
+				String subtotal_value = rs.getString("subtotal"); //小計
 
 				SalesInformation orderinfo = new SalesInformation(order_no_value, order_date_value, member_id_value,
-						user_name_value, payment_method_value, total_amount_value, regist_datetime_value,
+						user_name_value, payment_method_value, total_amount_value, delivery_date_value,
 						remarks_value, row_no_value, item_cd_value, item_name_value, unit_price_value, quantity_value, subtotal_value);
 
 				orderList.add(orderinfo);
