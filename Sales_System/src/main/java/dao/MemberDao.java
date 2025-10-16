@@ -19,39 +19,39 @@ public class MemberDao extends BaseDao {
 	public MemberDao() throws SalesSystemException {
 		super();
 	}
-	
+
 	public String findItem_Name(SalesInformation salesinfo) throws SalesSystemException {
-		
+
 		// 商品名を格納する変数
 		String item_name = null;
-		
+
 		// 入力された商品コードを変数に格納
 		String item_cd = salesinfo.getItem_Cd();
-		
+
 		try {
 			// SQL文
 			String sql = "SELECT item_name FROM m_item WHERE item_cd=?";
-			
+
 			// SQL実行
 			ps = con.prepareStatement(sql);
 			ps.setString(1, item_cd);
 			rs = ps.executeQuery();
-			
+
 			// 商品名を取得
 			if (rs.next()) {
 				item_name = rs.getString("item_name");
 			}
-			
+
 		} catch (SQLException e) {
 			e.printStackTrace();
 			throw new SalesSystemException("該当の商品はありませんでした。");
 		}
-		
+
 		// 商品名を返却
 		return item_name;
-		
+
 	}
-	
+
 	/**
 	 * 4つのテーブル(order, order_detail, member, m_item)に登録されている売上情報を検索
 	 * 検索結果が0件の場合は空のリストを返却
@@ -70,111 +70,146 @@ public class MemberDao extends BaseDao {
 		String delivery_date_flag = salesinfo.getDelivery_Date_Flag();
 		String item_cd = salesinfo.getItem_Cd();
 
-		// SQL文の条件式を格納する変数
-		// 初期値は全検索
-		String date_term = "(order_date LIKE '%')";
-		String member_id_term = "(member_id LIKE '%')";
-		String payment_method_term = "(payment_method LIKE '%')";
-		String delivery_date_flag_term = "(delivery_date LIKE '%')";
-		String item_cd_term = "(order_detail.item_cd LIKE '%')";
-		
 		// 【エラーチェック】入力値をコンソールで確認
-		System.out.println("開始日："+order_date_start);  
-		System.out.println("終了日："+order_date_end);
-		System.out.println("会員ID："+member_id);
-		System.out.println("支払方法："+payment_method);
-		System.out.println("納品済or未納："+delivery_date_flag);
-		System.out.println("商品コード："+item_cd);
-		
-		// 入力された値に応じて分岐処理
-		// 注文日付
-		// orderテーブル
-		if (!order_date_start.equals("") && !order_date_end.equals("")) {
+		System.out.println("開始日：" + order_date_start);
+		System.out.println("終了日：" + order_date_end);
+		System.out.println("会員ID：" + member_id);
+		System.out.println("支払方法：" + payment_method);
+		System.out.println("納品済or未納：" + delivery_date_flag);
+		System.out.println("商品コード：" + item_cd);
 
-			date_term = "order_date BETWEEN '" + order_date_start + "' AND '" + order_date_end+"'";
-
-		} else if (!order_date_start.equals("") && order_date_end.equals("")) {
-
-			date_term = "order_date='" + order_date_start+"'";
-
-		} else if (order_date_start.equals("") && !order_date_end.equals("")) {
-
-			date_term = "order_date='" + order_date_end+"'";
-
-		} else {
-			
-		}
-
-		// 会員ID
-		// orderテーブル
-		// 会員IDが入力された場合は、日付以外の検索条件を無視
-		if (!member_id.equals("")) {
-
-			member_id_term = "member_id=" + member_id;
-
-		} else {
-
-			// 決済方法
-			// orderテーブル
-			if (payment_method!=null && payment_method.equals("0")) {
-
-				payment_method_term = "payment_method=0";
-
-			} else if (payment_method!=null && payment_method.equals("1")) {
-
-				payment_method_term = "payment_method=1";
-
-			} else if (payment_method!=null && payment_method.equals("2")) {
-
-				payment_method_term = "payment_method=2";
-
-			} else {
-
-			}
-
-			// 登録or未登録判定
-			// m_itemテーブル
-			if (delivery_date_flag.equals("未納品")) {
-
-				delivery_date_flag_term = "delivery_date IS NULL";
-
-			} else if (delivery_date_flag.equals("納品済")) {
-
-				delivery_date_flag_term = "delivery_date IS NOT NULL";
-
-			} else {
-
-			}
-
-			// 商品コード
-			// order_detailテーブル
-			if (!item_cd.equals("")) {
-
-				item_cd_term = "order_detail.item_cd=" + item_cd;
-
-			} else {
-
-			}
-		}
 		try {
-			// SQL文
-			String sql = "SELECT * FROM `order` "
+			
+
+			// SQL文の文字列　
+			//フォームから受け取った値に合わせて条件を追加していく。
+			String str = "SELECT * FROM `order` "
 					+ "INNER JOIN order_detail ON `order`.order_no = order_detail.order_no "
 					+ "INNER JOIN `member` ON `order`.member_id = `member`.user_id "
 					+ "INNER JOIN m_item ON order_detail.item_cd = m_item.item_cd "
-					+ "WHERE ? AND ? AND ? AND ? AND ?";
+					+ "WHERE ";
+
+			// 注文日付
+			//フォームに開始日と終了日が双方入力されている場合
+			if (!order_date_start.equals("") && !order_date_end.equals("")) {
+				
+				str += "(order_date BETWEEN ? AND ?) AND ";
+				
+			//フォームに開始日のみ入力されている場合
+			} else if (!order_date_start.equals("") && order_date_end.equals("")) {
+				
+				str += "(order_date BETWEEN ? AND ?) AND ";
+				order_date_end = order_date_start;
 			
-			// 検索の実行
+			//フォームに終了日のみ入力されている場合
+			} else if (order_date_start.equals("") && !order_date_end.equals("")) {
+				
+				str += "(order_date BETWEEN ? AND ?) AND ";
+				order_date_start = order_date_end;
+				
+			//それ以外の場合
+			} else {
+				
+				//注文日付は全検索
+				str += "(? = ?) AND ";
+				order_date_start = "empty";
+				order_date_end = "empty";
+				
+			}
+
+			// 会員ID
+			// 会員IDが入力された場合は、日付以外の検索条件を無視
+			if (!member_id.equals("")) {
+								
+				str += "(member_id = ?) AND ";
+				
+				//支払方法、納品済or未納、商品コードの入力値は無視
+				payment_method = "empty";
+				item_cd  = "empty";
+				str += "(payment_method = ? OR 1=1) AND ";
+				str += "(order_detail.item_cd = ? OR 1=1)";
+				
+
+			} else {
+				
+				// フォームに会員コードが入力されていないので会員コード全検索
+				str += "(member_id = ? OR 1=1) AND ";
+				
+				// 決済方法
+				// フォームで"代引き"が選択された場合
+				if (payment_method != null && payment_method.equals("0")) {
+
+					str += "(payment_method = ?) AND ";
+					
+				// フォームで"クレジット"が選択された場合
+				} else if (payment_method != null && payment_method.equals("1")) {
+
+					str += "(payment_method = ?) AND ";
+					
+				// フォームで現金が選択された場合
+				} else if (payment_method != null && payment_method.equals("2")) {
+
+					str += "(payment_method = ?) AND ";
+					
+				//それ以外の場合
+				} else {
+					
+					//全検索
+					payment_method = "empty";
+					str += "(payment_method = ? OR 1=1) AND ";
+
+				}
+
+				// 登録or未登録判定
+				// "未納品"が選択された場合
+				if (delivery_date_flag.equals("未納品")) {
+					
+					// 条件：納品日カラムがNULLとなっている
+					str += "(delivery_date IS NULL) AND ";
+					
+				// "納品済"が選択された場合
+				} else if (delivery_date_flag.equals("納品済")) {
+					
+					// 条件：納品日カラムに日付が記載されている
+					str += "(delivery_date IS NOT NULL) AND ";
+					
+				// それ以外の場合
+				} else {					
+
+				}
+
+				// 商品コード
+				// 商品コードが入力されている
+				if (!item_cd.equals("")) {
+
+					str += "(order_detail.item_cd = ?)";
+					
+				// それ以外の場合
+				} else {
+					
+					//全検索
+					item_cd = "empty";
+					str += "(order_detail.item_cd = ? OR 1=1)";
+
+				}
+			}
+			
+			String sql = str;
+			
+			//SQL文のコンパイル
 			ps = con.prepareStatement(sql);
-			ps.setString(1, date_term);
-			ps.setString(2, member_id_term);
-			ps.setString(3, payment_method_term);
-			ps.setString(4, delivery_date_flag_term);
-			ps.setString(5, item_cd_term);
+			
+			ps.setString(1, order_date_start);
+			ps.setString(2, order_date_end);
+			ps.setString(3, member_id);
+			ps.setString(4, payment_method);
+			ps.setString(5, item_cd);
+			
+			// SQLの実行
 			rs = ps.executeQuery();
 			
 			// SQL文の内容をコンソールで確認
-			System.out.println(sql); 
+			System.out.println(sql);
 
 			// 検索結果から会員情報の各項目を取得してリストに格納
 			while (rs.next()) {
@@ -196,7 +231,8 @@ public class MemberDao extends BaseDao {
 
 				SalesInformation orderinfo = new SalesInformation(order_no_value, order_date_value, member_id_value,
 						user_name_value, payment_method_value, total_amount_value, delivery_date_value,
-						remarks_value, row_no_value, item_cd_value, item_name_value, unit_price_value, quantity_value, subtotal_value);
+						remarks_value, row_no_value, item_cd_value, item_name_value, unit_price_value, quantity_value,
+						subtotal_value);
 
 				orderList.add(orderinfo);
 
@@ -205,7 +241,7 @@ public class MemberDao extends BaseDao {
 			e.printStackTrace();
 			throw new SalesSystemException("注文情報の取得に失敗しました");
 		}
-	
+
 		// 売上情報格納リストを返却
 		return orderList;
 
