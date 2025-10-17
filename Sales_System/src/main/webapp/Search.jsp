@@ -6,6 +6,7 @@
 <%@ page import="dao.MemberDao"%>
 <%@ page import="java.text.SimpleDateFormat"%>
 <%@ page import="java.sql.Timestamp"%>
+<%@ page import="java.util.HashMap"%>
 
 <!DOCTYPE html>
 <html>
@@ -34,7 +35,7 @@
 					<div class="col-md-2 form-group">会員コード</div>
 					<div class="col-md-3 form-group">
 						<input type="number" name="member_id" id="member_id_form"
-							class="form-control">
+							class="form-control" placeholder="会員コードを入力">
 					</div>
 					<div class="col-md-1 form-group"></div>
 					<div class="col-md-1 form-group">支払方法</div>
@@ -62,15 +63,14 @@
 					<div class="col-md-1 form-group">商品コード</div>
 					<div class="col-md-2 form-group">
 						<input type="number" name="item_cd" id="item_cd_form"
-							class="form-control">
+							class="form-control" placeholder="商品コードを入力">
 					</div>
-					<div class="col-md-2 form-group">商品名表示</div>
-					<div class="col-md-2 form-group" id="item_name">
+					<div class="col-md-4 form-group" id="item_name">
 						<!-- 商品名をリクエストスコープから取得 -->
 						<%
 						if (request.getAttribute("item_name") != null) {
 						%>
-						<%=request.getAttribute("item_name")%>
+						商品名：<span class="fs-5 fw-bold" style="color:red;"><%=request.getAttribute("item_name")%></span>
 						<%
 						}
 						%>
@@ -95,7 +95,7 @@
 		<div class="container">
 			<table class="table table-hover">
 				<!-- 見出し部分 -->
-				<thead class="thead-light">
+				<thead class="table-light">
 					<tr>
 						<th class="col-md-1">注文番号</th>
 						<th class="col-md-1">注文日</th>
@@ -110,7 +110,8 @@
 				<!-- 売上情報をリクエストスコープから取得 -->
 				<tbody id="orderList">
 					<%
-					List<SalesInformation> orderList = (List<SalesInformation>) request.getAttribute("orderList");
+					List<SalesInformation> OrderList = (List<SalesInformation>) request.getAttribute("OrderList");
+					HashMap<String, List<SalesInformation>> OrderDetailHashMap = (HashMap<String, List<SalesInformation>>) request.getAttribute("OrderDetailHashMap");
 					%>
 					<%
 					String message = (String) request.getAttribute("message");
@@ -134,14 +135,19 @@
 					// 注文数カウンター
 					int order_count = 0;
 
-					if (orderList != null) {
+					if (OrderList != null) {
+						
 						//拡張for文
-						for (SalesInformation orderinfo : orderList) {
+						for (SalesInformation orderinfo : OrderList) {
+							if(order_count==Integer.parseInt(orderinfo.getOrder_No())){
+								continue;
+							}
+							order_count++;
 					%>
-					<tr>
+					
+					<tr class="table-success">
 						<td>
 							<!-- 注文番号 --> <%=orderinfo.getOrder_No()%> 
-							<!-- 注文数をカウント --> <%order_count++;%>
 						</td>
 						<!-- 注文日 -->
 						<td>
@@ -196,24 +202,26 @@
 					<tr>
 						<td colspan="3"></td>
 						<td colspan="1">購入内訳</td>
-						<td colspan="3">
-							<%
-							for (int i = 0; i < orderinfo.getRow_No(); i++) {
-							%> <!-- 注文行番号 --> <%=i+1%> <!-- 商品番号 --> <%=orderinfo.getItem_Cd()%>、
-							<!-- 商品名 --> <%=orderinfo.getItem_Name()%>、 <!-- 単価 --> ￥<%=orderinfo.getUnit_Price()%>、
-							<!-- 数量 --> <%=orderinfo.getQuantity()%>個 <!-- 小計 --> 小計：￥<%=orderinfo.getSubtotal()%>
+						<td colspan="3" class="table-danger">
+						<% List<SalesInformation> OrderDetail = OrderDetailHashMap.get(orderinfo.getOrder_No()); %>
+						<%
+						int i=0;
+						for(SalesInformation order_detail_info : OrderDetail){ 
+						%>
+							<!-- 注文行番号 --><%=i+1%><%i++;%>、 <!-- 商品番号 --> <%=order_detail_info.getItem_Cd()%>、
+							<!-- 商品名 --> <%=order_detail_info.getItem_Name()%>、 <!-- 単価 --> ￥<%=order_detail_info.getUnit_Price()%>、
+							<!-- 数量 --> <%=order_detail_info.getQuantity()%>個 <!-- 小計 --> 小計：￥<%=order_detail_info.getSubtotal()%>
 							<br> 
-							<%
-							}
-							%>
+							<% } %>
 						</td>
 					</tr>
 					<%
 					}
 					%>
 					<tr>
-						<td colspan="4">合計注文数：<%=order_count%></td>
-						<td colspan="8">集計金額 ￥<%=sum_Total%> (￥<%=sum_Total_Tax%>)
+						<td colspan="4">合計注文数：<span class="fs-4"><%=order_count%></span></td>
+						<td colspan="8">集計金額： ￥<span class="fs-4"><%=sum_Total%></span>
+						 (うち消費税：￥<%=sum_Total_Tax%>)
 						</td>
 					</tr>
 					<%

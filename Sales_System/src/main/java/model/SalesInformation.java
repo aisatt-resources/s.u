@@ -44,7 +44,26 @@ public class SalesInformation {
 		this.delivery_date_flag = delivery_date_flag;
 		this.item_cd = item_cd;
 	}
+	
+	//購入内訳用
+	public SalesInformation(String order_no) {
 
+		this.order_no = order_no;
+
+	}
+	
+	//購入内訳用
+	public SalesInformation(int row_no, String item_cd,
+			String item_name, String unit_price, String quantity, String subtotal) {
+
+		this.row_no = row_no;
+		this.item_cd = item_cd;
+		this.item_name = item_name;
+		this.unit_price = unit_price;
+		this.quantity = quantity;
+		this.subtotal = subtotal;
+
+	}
 
 
 	/**
@@ -66,8 +85,7 @@ public class SalesInformation {
 	 */
 	public SalesInformation(String order_no, Timestamp order_date, String member_id,
 			String user_name, String payment_method, String total_amount,
-			String delivery_date, String remarks, int row_no, String item_cd,
-			String item_name, String unit_price, String quantity, String subtotal) {
+			String delivery_date, String remarks) {
 		this.order_no = order_no;
 		this.order_date = order_date;
 		this.member_id = member_id;
@@ -76,12 +94,6 @@ public class SalesInformation {
 		this.total_amount = total_amount;
 		this.delivery_date = delivery_date;
 		this.remarks = remarks;
-		this.row_no = row_no;
-		this.item_cd = item_cd;
-		this.item_name = item_name;
-		this.unit_price = unit_price;
-		this.quantity = quantity;
-		this.subtotal = subtotal;
 
 	}
 

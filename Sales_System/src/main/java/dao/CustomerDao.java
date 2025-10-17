@@ -125,7 +125,7 @@ public class CustomerDao extends BaseDao {
 			for (int i = 0; i < 4; i++) {
 				System.out.println(item_cd_list[i]);
 			}
-
+			
 			//税抜金額
 			int[] amount = new int[4];
 
@@ -134,6 +134,9 @@ public class CustomerDao extends BaseDao {
 
 			//税抜販売価格
 			int[] price = new int[4];
+			
+			//税抜単価
+			int[] unit_price = new int[4];
 			
 			//注文行番号
 			int row_no = 1;
@@ -160,7 +163,10 @@ public class CustomerDao extends BaseDao {
 					//エラーチェック
 					System.out.println(price[i]);
 				}
-
+				
+				//税抜単価
+				unit_price[i] = price[i];
+				
 				//税抜金額
 				amount[i] = price[i] * Integer.parseInt(quantity_list[i]);
 
@@ -168,15 +174,16 @@ public class CustomerDao extends BaseDao {
 				total_amount += amount[i];
 
 				//order_detailテーブルにデータ登録するSQL文
-				sql = "INSERT INTO order_detail (order_no, row_no, item_cd, quantity, amount) VALUES (?,?,?,?,?)";
+				sql = "INSERT INTO order_detail (order_no, row_no, item_cd, quantity, unit_price, amount) VALUES (?,?,?,?,?,?)";
 
-				//orderテーブルに注文番号、商品コード、数量を登録
+				//order_detailテーブルに注文番号、注文行番号、商品コード、数量、税抜単価、税抜金額を登録
 				ps = con.prepareStatement(sql);
 				ps.setInt(1, order_no);
 				ps.setInt(2, row_no);
 				ps.setString(3, item_cd_list[i]);
 				ps.setString(4, quantity_list[i]);
-				ps.setInt(5, amount[i]);
+				ps.setInt(5, unit_price[i]);
+				ps.setInt(6, amount[i]);
 				ps.executeUpdate();
 
 				row_no++;

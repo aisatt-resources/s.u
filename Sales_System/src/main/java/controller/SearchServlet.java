@@ -1,6 +1,7 @@
 package controller;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
 
 import jakarta.servlet.RequestDispatcher;
@@ -22,7 +23,7 @@ public class SearchServlet extends HttpServlet {
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		
+
 		// 画面に入力された注文情報を取得
 		request.setCharacterEncoding("UTF-8");
 		String order_date_start = request.getParameter("order_date_start");
@@ -31,28 +32,35 @@ public class SearchServlet extends HttpServlet {
 		String payment_method = request.getParameter("payment_method");
 		String delivery_date_flag = request.getParameter("delivery_date_flag");
 		String item_cd = request.getParameter("item_cd");
-		
+
 		String nextPage = null;
-		
+
 		try {
-			
+
 			MemberDao memberDao = new MemberDao();
-			SalesInformation orderinfo = 
-				new	SalesInformation(order_date_start, order_date_end, member_id,
-							payment_method, delivery_date_flag, item_cd);
-			
+			SalesInformation orderinfo = new SalesInformation(order_date_start, order_date_end, member_id,
+					payment_method, delivery_date_flag, item_cd);
+
 			// 入力された商品コードから商品名を検索して取得
 			String item_name = memberDao.findItem_Name(orderinfo);
-			
-			// 取得した検索結果（注文情報）をリストに格納
-			List<SalesInformation> orderList = memberDao.findOrders(orderinfo);
-			
+
+			// 取得した検索結果（注文番号）をリストに格納
+			List<String> OrderNoList = memberDao.findOrderNo(orderinfo);
+
+			//購入情報ヘッダーリストを取得
+			List<SalesInformation> OrderList = memberDao.findOrder(OrderNoList);
+
+			//購入詳細リストを取得
+			HashMap<String, List<SalesInformation>> OrderDetailHashMap = memberDao.findOrder_Detail(OrderNoList);
+
 			// 取得した商品名をリクエストスコープにセット
 			request.setAttribute("item_name", item_name);
-			
-			// 取得した会員情報をリクエストスコープにセット
-			request.setAttribute("orderList", orderList);
-			
+
+			// 取得した購入情報ヘッダーリストをリクエストスコープにセット
+			request.setAttribute("OrderList", OrderList);
+
+			// 取得した購入詳細リストをリクエストスコープにセット
+			request.setAttribute("OrderDetailHashMap", OrderDetailHashMap);
 
 			// 検索結果表示画面へ遷移する準備
 			nextPage = "Search.jsp";
@@ -71,6 +79,6 @@ public class SearchServlet extends HttpServlet {
 		// 次の画面に遷移
 		RequestDispatcher requestDispatcher = request.getRequestDispatcher(nextPage);
 		requestDispatcher.forward(request, response);
-	}		
+	}
 
 }
