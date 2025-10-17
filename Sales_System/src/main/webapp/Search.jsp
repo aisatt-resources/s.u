@@ -208,8 +208,10 @@
 						int i=0;
 						for(SalesInformation order_detail_info : OrderDetail){ 
 						%>
-							<!-- 注文行番号 --><%=i+1%><%i++;%>、 <!-- 商品番号 --> <%=order_detail_info.getItem_Cd()%>、
-							<!-- 商品名 --> <%=order_detail_info.getItem_Name()%>、 <!-- 単価 --> ￥<%=order_detail_info.getUnit_Price()%>、
+							<!-- 注文行番号 --><%=i+1%><%i++;%>、
+							<!-- 商品名 --> <%=order_detail_info.getItem_Name()%>
+							 <!-- 商品コード --> [<%=order_detail_info.getItem_Cd()%>]
+							<!-- 単価 --> ￥<%=order_detail_info.getUnit_Price()%>、
 							<!-- 数量 --> <%=order_detail_info.getQuantity()%>個 <!-- 小計 --> 小計：￥<%=order_detail_info.getSubtotal()%>
 							<br> 
 							<% } %>

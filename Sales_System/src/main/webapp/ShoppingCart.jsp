@@ -51,8 +51,8 @@
 					<!-- 商品名 -->
 					<span id="item_name<%=i%>"></span> <br>
 					<!-- 小計 -->
-					<span>小計(￥)</span>
-					<h3 id="subTotal<%=i%>">***小計を表示***</h3>
+					<span>小計：￥</span>
+					<span class="fs-5 fw-bold" id="subTotal<%=i%>">***小計を表示***</span>
 				</div>
 				<!-- 数量カウンター -->
 				<div class="col-md-2 form-group" id="counter">
@@ -115,7 +115,7 @@
 				<!-- 合計金額 -->
 				<div class="col-md-3">
 					<p>
-						合計金額：<span class="fs-4" id="Total"></span>
+						<u>合計金額：￥<span class="fs-3 fw-bold" id="Total"></span></u>
 					</p>
 					<!-- 購入ボタン -->
 					<button class="btn btn-warning btn-form display-4">

@@ -10,15 +10,21 @@
 <body>
 	<!-- ロゴの表示・検索フォーム・カートへの遷移ボタン -->
 	<jsp:include page="common/navi.jsp" />
-	<h1>注文情報</h1>
+	<p>
+	<h3 style="border:2px solid; width: 200px; text-align:center;">カートに追加</h3>
+	</p>
 	<!-- 商品リスト -->
 	<section class="py-5">
 		<%
 		if (request.getAttribute("message") != null) {
 		%>
+		<div class="row justify-content-center">
 		<h2 style="text-align: center; color: red;">
 			<%=request.getAttribute("message")%>
 		</h2>
+		<a href="Top.jsp" style="text-align:center;">
+		買い物を続ける</a>
+		</div>
 		<%
 		} else {
 		%>
@@ -27,21 +33,23 @@
 			<div style="text-align: center;">
 				<!-- 画像 -->
 				<img src="images/<%=request.getAttribute("url")%>.png"
-					alt="<%=request.getAttribute("item_name")%>" width="400"
-					height="400"><br> <span id="item_name"><%=request.getAttribute("item_name")%></span>
-				<h3>
-					￥<%=request.getAttribute("price")%></h3>
+					alt="<%=request.getAttribute("item_name")%>" width="200"
+					height="200"><br> <span id="item_name"><%=request.getAttribute("item_name")%></span>
+				<div>
+					<span class="fs-5">￥<%=request.getAttribute("price")%></span>/個</div>
 				<div class="counter" id="counter" style="text-align: center;">
 					<button type="button" id="minus">－</button>
 					<input type="text" pattern="[0-9]*" min="1" max="99" value="1"
 						class="quantity" name="quantity" id="quantity" size="1">
 					<button type="button" id="plus">＋</button>
-					<div id="subTotal">
-						小計：￥<%=request.getAttribute("price")%></div>
+					<div>
+					<u>
+						小計：￥<span class="fs-3" id="subTotal"><%=request.getAttribute("price")%></span></div>
+				</u>
 				</div>
 				<br>
 				<!-- セッションへ注文データを保存し、サーブレットに処理を投げる -->
-				<button onclick="addItem()">カートに追加</button>
+				<button class="btn btn-warning btn-form display-4" onclick="addItem()">カートに追加</button>
 
 			</div>
 		</form>
@@ -66,7 +74,7 @@
 	  if(quantity_element.value >= 2) {
 	    quantity_element.value--;
 		const subTotal = price*quantity_element.value;
-	    subTotal_element.innerHTML = "小計：￥"+ subTotal;
+	    subTotal_element.innerHTML = subTotal;
 	  }
 	  });
 
@@ -75,7 +83,7 @@
 	    quantity_element.value++;
 		  const subTotal = price*quantity_element.value;
 		  //小計タグに出力
-		  subTotal_element.innerHTML = "小計：￥"+ subTotal;
+		  subTotal_element.innerHTML = subTotal;
 	  });
 	  
 	  // 商品コードと購入数量をセッションに保存

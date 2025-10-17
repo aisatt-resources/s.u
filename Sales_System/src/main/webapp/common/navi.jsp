@@ -17,9 +17,17 @@
 				<li><a class="dropdown-item" href="#" onclick="Message();">French</a></li>
 			</ul>
 		</div>
-		<!-- 一覧表示へのリンク -->
+		<div>
+			<div class="input-group">
+				<button class="input-group-text bg-dark text-white">検索</button>
+				<input type="text" class="input-text" placeholder="商品を検索"></input>
+			</div>
+		</div>
+		<!-- カートへのリンク -->
 		<ul class="navbar-nav ml-auto">
-			<li><a class="nav-link fs-4" href="ShoppingCart.jsp">🛒</a></li>
+			<li><a class="nav-link" href="ShoppingCart.jsp"><span
+					class="fs-6">🛒</span><br>カート</a></li>
+			<li><a class="nav-link" href=""><span class="fs-6">📄</span><br>購入履歴</span></a></li>
 		</ul>
 	</div>
 	<!-- CSS（bootstrap）の読み込み ※これがないとドロップダウンが有効化されない-->
