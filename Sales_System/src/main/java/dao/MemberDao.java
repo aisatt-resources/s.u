@@ -22,6 +22,7 @@ public class MemberDao extends BaseDao {
 		super();
 	}
 
+	//入力された商品コードから商品名を検索し、返却するメソッド
 	public String findItem_Name(SalesInformation salesinfo) throws SalesSystemException {
 
 		// 商品名を格納する変数
@@ -55,9 +56,10 @@ public class MemberDao extends BaseDao {
 	}
 
 	/**
-	 * 4つのテーブル(order, order_detail, member, m_item)に登録されている売上情報を検索
-	 * 検索結果が0件の場合は空のリストを返却
-	 * @return 売上情報の入ったリスト
+	 * 4つのテーブル(order, order_detail, member, m_item)を結合させ、
+	 * 検索条件を満たすレコードを検索し、該当レコードの注文番号をリスト化して返却する
+	 * ※検索結果が0件の場合は空のリストを返却
+	 * @return 注文番号リスト
 	 * @throws MembershipException 検索失敗の際に発生
 	 **/
 	public List<String> findOrderNo(SalesInformation salesinfo) throws SalesSystemException {
@@ -82,39 +84,43 @@ public class MemberDao extends BaseDao {
 
 		try {
 
+			//条件文格納リスト
+			List<String> conditionList = new ArrayList<String>();
+
+			//入力値格納用リスト
+			List<String> valueList = new ArrayList<String>();
+
 			// SQL文の文字列　
 			//フォームから受け取った値に合わせて条件を追加していく。
 			String str = "SELECT `order`.order_no FROM `order` "
 					+ "INNER JOIN order_detail ON `order`.order_no = order_detail.order_no "
 					+ "INNER JOIN `member` ON `order`.member_id = `member`.user_id "
-					+ "INNER JOIN m_item ON order_detail.item_cd = m_item.item_cd "
-					+ "WHERE ";
+					+ "INNER JOIN m_item ON order_detail.item_cd = m_item.item_cd ";
 
 			// 注文日付
 			//フォームに開始日と終了日が双方入力されている場合
 			if (!order_date_start.equals("") && !order_date_end.equals("")) {
 
-				str += "(order_date BETWEEN ? AND ?) AND ";
+				conditionList.add("(order_date BETWEEN ? AND ?)");
+				valueList.add(order_date_start);
+				valueList.add(order_date_end);
 
 				//フォームに開始日のみ入力されている場合
 			} else if (!order_date_start.equals("") && order_date_end.equals("")) {
 
-				str += "(order_date BETWEEN ? AND ?) AND ";
-				order_date_end = order_date_start;
+				conditionList.add("(order_date BETWEEN ? AND ?)");
+				valueList.add(order_date_start);
+				valueList.add(order_date_start);
 
 				//フォームに終了日のみ入力されている場合
 			} else if (order_date_start.equals("") && !order_date_end.equals("")) {
 
-				str += "(order_date BETWEEN ? AND ?) AND ";
-				order_date_start = order_date_end;
+				conditionList.add("(order_date BETWEEN ? AND ?)");
+				valueList.add(order_date_end);
+				valueList.add(order_date_end);
 
 				//それ以外の場合
 			} else {
-
-				//注文日付は全検索
-				str += "(? = ?) AND ";
-				order_date_start = "empty";
-				order_date_end = "empty";
 
 			}
 
@@ -122,41 +128,34 @@ public class MemberDao extends BaseDao {
 			// 会員IDが入力された場合は、日付以外の検索条件を無視
 			if (!member_id.equals("")) {
 
-				str += "(member_id = ?) AND ";
+				conditionList.add("(member_id = ?)");
+				valueList.add(member_id);
 
 				//支払方法、納品済or未納、商品コードの入力値は無視
-				payment_method = "empty";
-				item_cd = "empty";
-				str += "(payment_method = ? OR 1=1) AND ";
-				str += "(order_detail.item_cd = ? OR 1=1)";
 
 			} else {
-
-				// フォームに会員コードが入力されていないので会員コード全検索
-				str += "(member_id = ? OR 1=1) AND ";
 
 				// 決済方法
 				// フォームで"代引き"が選択された場合
 				if (payment_method != null && payment_method.equals("0")) {
 
-					str += "(payment_method = ?) AND ";
+					conditionList.add("(payment_method = ?)");
+					valueList.add(payment_method);
 
 					// フォームで"クレジット"が選択された場合
 				} else if (payment_method != null && payment_method.equals("1")) {
 
-					str += "(payment_method = ?) AND ";
+					conditionList.add("(payment_method = ?)");
+					valueList.add(payment_method);
 
 					// フォームで現金が選択された場合
 				} else if (payment_method != null && payment_method.equals("2")) {
 
-					str += "(payment_method = ?) AND ";
+					conditionList.add("(payment_method = ?)");
+					valueList.add(payment_method);
 
 					//それ以外の場合
 				} else {
-
-					//全検索
-					payment_method = "empty";
-					str += "(payment_method = ? OR 1=1) AND ";
 
 				}
 
@@ -165,13 +164,13 @@ public class MemberDao extends BaseDao {
 				if (delivery_date_flag.equals("未納品")) {
 
 					// 条件：納品日カラムがNULLとなっている
-					str += "(delivery_date IS NULL) AND ";
+					conditionList.add("(delivery_date IS NULL)");
 
 					// "納品済"が選択された場合
 				} else if (delivery_date_flag.equals("納品済")) {
 
 					// 条件：納品日カラムに日付が記載されている
-					str += "(delivery_date IS NOT NULL) AND ";
+					conditionList.add("(delivery_date IS NOT NULL)");
 
 					// それ以外の場合
 				} else {
@@ -182,37 +181,72 @@ public class MemberDao extends BaseDao {
 				// 商品コードが入力されている場合
 				if (!item_cd.equals("")) {
 
-					str += "(order_detail.item_cd = ?)";
+					conditionList.add("(order_detail.item_cd = ?)");
+					valueList.add(item_cd);
 
 					// それ以外の場合
 				} else {
 
-					//全検索
-					item_cd = "empty";
-					str += "(order_detail.item_cd = ? OR 1=1)";
-
 				}
 			}
 
-			//SQL文に文字列を代入
+			//SQL文におけるWHERE以降の条件文を作成
+			if (!conditionList.isEmpty()) {
+
+				//WHEREとANDの挿入に利用
+				int counter = 1;
+
+				//条件格納リストの要素の数だけループ
+				for (String condition : conditionList) {
+
+					//最初だけWHEREを入れる
+					if (counter == 1) {
+						str += " WHERE ";
+					}
+					
+					//条件式をSQL文に追加
+					str += condition;
+
+					//条件式の間にANDを挿入
+					if (counter < conditionList.size()) {
+						str += " AND ";
+					}
+
+					counter++;
+
+				}
+
+			}
+
+			//SQL文をコンパイル用変数に代入
 			String sql = str;
+
+			//【エラーチェック用】
+			System.out.println(sql);
 
 			//SQL文のコンパイル
 			ps = con.prepareStatement(sql);
 
-			ps.setString(1, order_date_start);
-			ps.setString(2, order_date_end);
-			ps.setString(3, member_id);
-			ps.setString(4, payment_method);
-			ps.setString(5, item_cd);
+			//入力値リストが空ではない場合
+			if (!valueList.isEmpty()) {
+
+				//プレースホルダ―の番号
+				int i = 1;
+
+				//リストから入力値を取り出す
+				for (String value : valueList) {
+
+					//リストの値をプレースホルダ―に設定
+					ps.setString(i, value);
+
+					i++;
+				}
+			}
 
 			// SQLの実行
 			rs = ps.executeQuery();
 
-			// SQL文の内容をコンソールで確認
-			System.out.println(sql);
-
-			// 検索結果から会員情報の各項目を取得してリストに格納
+			// 検索結果から注文番号を取得してリストに格納
 			while (rs.next()) {
 
 				String order_no_value = rs.getString("order_no"); //注文番号 orderテーブル
@@ -222,28 +256,34 @@ public class MemberDao extends BaseDao {
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
-			throw new SalesSystemException("注文情報の取得に失敗しました");
+			throw new SalesSystemException("売上情報の取得に失敗しました");
 		}
 
+		//※order_detailテーブルを結合していることにより、
+		//　1つの注文番号に対して複数（購入商品の種類数）のレコードが存在することがあるので、
+		//　注文番号リスト内の重複する値(注文番号)を1つにする
 		List<String> OrderNoListMerge = new ArrayList<String>(new LinkedHashSet<>(OrderNoList));
 
-		// 売上情報格納リストを返却
+		// 注文番号リストを返却
 		return OrderNoListMerge;
 
 	}
 
 	/**
-	 * 4つのテーブル(order, order_detail, member, m_item)に登録されている売上情報を検索
+	 * 2つのテーブル(order, member)を結合させ、
+	 * 引数で受け取った注文番号リストの各注文番号で検索し、注文番号ごとの購入情報を取得する
 	 * 検索結果が0件の場合は空のリストを返却
 	 * @return 売上情報の入ったリスト
 	 * @throws MembershipException 検索失敗の際に発生
 	 **/
 	public List<SalesInformation> findOrder(List<String> OrderNoList) throws SalesSystemException {
+
 		// 売上情報を格納するリスト
 		ArrayList<SalesInformation> OrderList = new ArrayList<>();
 
 		try {
 
+			//注文番号の数だけ処理する
 			for (String OrderNo : OrderNoList) {
 
 				String sql = "SELECT * FROM `order` "
@@ -258,7 +298,7 @@ public class MemberDao extends BaseDao {
 				// SQLの実行
 				rs = ps.executeQuery();
 
-				// 検索結果から会員情報の各項目を取得してリストに格納
+				// 検索結果から売上情報の各項目を取得してリストに格納
 				while (rs.next()) {
 
 					String order_no_value = rs.getString("order_no"); //注文番号 orderテーブル
@@ -283,26 +323,26 @@ public class MemberDao extends BaseDao {
 			throw new SalesSystemException("注文情報の取得に失敗しました");
 		}
 
-		ArrayList<SalesInformation> OrderListMerge = new ArrayList<>(new LinkedHashSet<>(OrderList));
-
 		// 売上情報格納リストを返却
-		return OrderListMerge;
+		return OrderList;
 
 	}
 
 	public HashMap<String, List<SalesInformation>> findOrder_Detail(List<String> OrderNoList)
 			throws SalesSystemException {
-
+		
+		// 注文番号をキー、注文詳細情報を値にして格納するハッシュマップ
 		HashMap<String, List<SalesInformation>> hashmap = new HashMap<>();
 
 		try {
+			//注文番号の数だけ処理
 			for (String Order : OrderNoList) {
 
 				//初期化
 				// 売上情報を格納するリスト
 				ArrayList<SalesInformation> OrderDetailList = new ArrayList<>();
 
-				//SQL文に文字列を代入
+				//注文番号から売上詳細情報を取得するためのSQL文
 				String sql = "SELECT * FROM order_detail WHERE order_no = ?";
 
 				//SQL文のコンパイル
@@ -316,7 +356,7 @@ public class MemberDao extends BaseDao {
 				// 検索結果から会員情報の各項目を取得してリストに格納
 				while (rs.next()) {
 
-					//注文詳細
+					//売上詳細情報
 					int row_no_value = rs.getInt("row_no"); //注文行
 					String item_cd_value = rs.getString("item_cd"); //商品コード
 					String item_name_value = rs.getString("item_name"); //商品名
@@ -330,17 +370,17 @@ public class MemberDao extends BaseDao {
 
 					OrderDetailList.add(orderinfo);
 
-					//注文番号をキー、注文詳細リストを値にして格納
+					//注文番号をキー、売上詳細情報リストを値にして格納
 					hashmap.put(Order, OrderDetailList);
 
 				}
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
-			throw new SalesSystemException("注文情報の取得に失敗しました");
+			throw new SalesSystemException("売上情報の取得に失敗しました");
 		}
 
-		// 売上情報格納リストを返却
+		// 売上情報格納変数を返却
 		return hashmap;
 
 	}
