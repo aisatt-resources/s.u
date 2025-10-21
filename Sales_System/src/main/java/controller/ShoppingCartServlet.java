@@ -14,7 +14,7 @@ import exception.SalesSystemException;
 import model.OrderInformation;
 
 /**
- * 検索画面のサーブレットクラス
+ * カート画面のサーブレットクラス
  */
 @WebServlet("/ShoppingCartServlet")
 public class ShoppingCartServlet extends HttpServlet {

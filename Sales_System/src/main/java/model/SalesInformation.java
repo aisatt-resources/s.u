@@ -24,6 +24,9 @@ public class SalesInformation {
 	private String unit_price; // 税抜単価
 	private String quantity; // 数量
 	private String subtotal; // 小計
+	private String price; // 税抜販売価格
+	private String product_category; // カテゴリ
+	private String description; // 説明
 
 	/**
 	 * コンストラクタ
@@ -95,6 +98,14 @@ public class SalesInformation {
 		this.delivery_date = delivery_date;
 		this.remarks = remarks;
 
+	}
+	
+	public SalesInformation(String item_name, String product_category,
+			String price, String description) {
+		this.item_name = item_name;
+		this.product_category = product_category;
+		this.price = price;
+		this.description = description;
 	}
 
 	/**
@@ -367,6 +378,54 @@ public class SalesInformation {
 	 */
 	public void setSubtotal(String subtotal) {
 		this.subtotal = subtotal;
+	}
+	
+	/**
+	 * 税抜商品価格を返却
+	 * @return subtotal
+	 */
+	public String getPrice() {
+		return price;
+	}
+
+	/**
+	 * 税抜商品価格をセット
+	 * @param subtotal
+	 */
+	public void setPrice(String price) {
+		this.price = price;
+	}
+	
+	/**
+	 * カテゴリを返却
+	 * @return subtotal
+	 */
+	public String getProduct_Category() {
+		return product_category;
+	}
+
+	/**
+	 * カテゴリをセット
+	 * @param subtotal
+	 */
+	public void setProduct_Category(String product_category) {
+		this.product_category = product_category;
+	}
+	
+	/**
+	 * 説明を返却
+	 * @return subtotal
+	 */
+	public String getDescription() {
+		return description;
+	}
+
+	/**
+	 * 説明をセット
+	 * @param subtotal
+	 */
+	public void setDescription(String description) {
+		this.description = description;
 	}
 
 }

@@ -35,11 +35,6 @@ public class OrderInformation {
 	}
 	
 	/**
-	 * コンストラクタ
-	 * @param item_cd
-	 */
-
-	/**
 	 * 会員IDを返却
 	 * @return member_id
 	 */

@@ -11,6 +11,14 @@
 	<!-- ロゴの表示・検索フォーム・カートへの遷移ボタン -->
 	<jsp:include page="common/navi.jsp" />
 	<h1>セール中</h1>
+	<%
+	if (request.getAttribute("message") != null) {
+	%>
+	<h6 style="color: red; text-align: center;">
+		<%=request.getAttribute("message")%></h6>
+	<%
+	}
+	%>
 	<!-- 商品リスト -->
 	<section class="py-5">
 		<div class="container">
@@ -20,25 +28,33 @@
 					<a href="OrderServlet?item_cd=1"> <!-- 画像 --> <img
 						src="images/item_1.png" alt="商品１" width="200" height="200">
 						<p class="fs-4">ジュース</p></a>
-					<p>￥<span class="fs-4 fw-bold">200</span>/個</p>
+					<p>
+						￥<span class="fs-4 fw-bold">200</span>/個
+					</p>
 				</div>
 				<div class="col-md-3 form-group">
 					<a href="OrderServlet?item_cd=2"> <!-- 画像 --> <img
 						src="images/item_2.png" alt="商品２" width="200" height="200">
 						<p class="fs-4">ハンバーガー</p></a>
-					<p>￥<span class="fs-4 fw-bold">500</span>/個</p>
+					<p>
+						￥<span class="fs-4 fw-bold">500</span>/個
+					</p>
 				</div>
 				<div class="col-md-3 form-group">
 					<a href="OrderServlet?item_cd=3"> <!-- 画像 --> <img
 						src="images/item_3.png" alt="商品３" width="200" height="200">
 						<p class="fs-4">フライドポテト</p></a>
-					<p>￥<span class="fs-4 fw-bold">250</span>/個</p>
+					<p>
+						￥<span class="fs-4 fw-bold">250</span>/個
+					</p>
 				</div>
 				<div class="col-md-3 form-group">
 					<a href="OrderServlet?item_cd=4"> <!-- 画像 --> <img
 						src="images/item_4.png" alt="商品４" width="200" height="200">
 						<p class="fs-4">フライドチキン</p></a>
-					<p>￥<span class="fs-4 fw-bold">300</span>/個</p>
+					<p>
+						￥<span class="fs-4 fw-bold">300</span>/個
+					</p>
 				</div>
 
 			</div>

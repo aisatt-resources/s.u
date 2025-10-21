@@ -2,6 +2,7 @@ package dao;
 
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
@@ -12,6 +13,7 @@ import model.SalesInformation;
 
 /**
  * 売上情報関連のDAOクラス
+ * 管理者画面の操作時に使用
  */
 public class MemberDao extends BaseDao {
 	/**
@@ -28,26 +30,27 @@ public class MemberDao extends BaseDao {
 		// 商品名を格納する変数
 		String item_name = null;
 
-		// 入力された商品コードを変数に格納
+		// 商品コードを変数に格納
 		String item_cd = salesinfo.getItem_Cd();
 
 		try {
 			// SQL文
+			// 商品コードで対象を絞り、商品名を検索
 			String sql = "SELECT item_name FROM m_item WHERE item_cd=?";
 
-			// SQL実行
 			ps = con.prepareStatement(sql);
 			ps.setString(1, item_cd);
 			rs = ps.executeQuery();
 
-			// 商品名を取得
 			if (rs.next()) {
+				
+				// 商品名を取得
 				item_name = rs.getString("item_name");
 			}
 
 		} catch (SQLException e) {
 			e.printStackTrace();
-			throw new SalesSystemException("該当の商品はありませんでした。");
+			throw new SalesSystemException("商品情報の取得に失敗しました。");
 		}
 
 		// 商品名を返却
@@ -57,13 +60,13 @@ public class MemberDao extends BaseDao {
 
 	/**
 	 * 4つのテーブル(order, order_detail, member, m_item)を結合させ、
-	 * 検索条件を満たすレコードを検索し、該当レコードの注文番号をリスト化して返却する
+	 * 検索条件を満たすレコードを検索し、該当レコードの注文番号をリスト化して返却するメソッド
 	 * ※検索結果が0件の場合は空のリストを返却
 	 * @return 注文番号リスト
-	 * @throws MembershipException 検索失敗の際に発生
+	 * @throws SalesSystemException 検索失敗の際に発生
 	 **/
 	public List<String> findOrderNo(SalesInformation salesinfo) throws SalesSystemException {
-		// 売上情報を格納するリスト
+		// 注文番号を格納するリスト
 		List<String> OrderNoList = new ArrayList<>();
 
 		// 入力された項目値をカプセル化
@@ -84,19 +87,20 @@ public class MemberDao extends BaseDao {
 
 		try {
 
-			//条件文格納リスト
+			//条件文を格納するリスト
 			List<String> conditionList = new ArrayList<String>();
 
-			//入力値格納用リスト
+			//入力値を格納するリスト
 			List<String> valueList = new ArrayList<String>();
 
-			// SQL文の文字列　
-			//フォームから受け取った値に合わせて条件を追加していく。
+			// SQL文
+			//フォームから受け取った値に合わせて条件を追加し、注文番号を検索
 			String str = "SELECT `order`.order_no FROM `order` "
 					+ "INNER JOIN order_detail ON `order`.order_no = order_detail.order_no "
 					+ "INNER JOIN `member` ON `order`.member_id = `member`.user_id "
 					+ "INNER JOIN m_item ON order_detail.item_cd = m_item.item_cd ";
-
+			
+			//入力情報をもとに条件文を作成
 			// 注文日付
 			//フォームに開始日と終了日が双方入力されている場合
 			if (!order_date_start.equals("") && !order_date_end.equals("")) {
@@ -125,14 +129,15 @@ public class MemberDao extends BaseDao {
 			}
 
 			// 会員ID
-			// 会員IDが入力された場合は、日付以外の検索条件を無視
+			// 会員IDが入力された場合は、日付と会員ID以外の検索条件を無視
 			if (!member_id.equals("")) {
 
 				conditionList.add("(member_id = ?)");
 				valueList.add(member_id);
 
 				//支払方法、納品済or未納、商品コードの入力値は無視
-
+				
+				//会員IDが入力されていない場合
 			} else {
 
 				// 決済方法
@@ -190,28 +195,34 @@ public class MemberDao extends BaseDao {
 				}
 			}
 
-			//SQL文におけるWHERE以降の条件文を作成
+			//WHERE以降のSQL文を作成
+			// 条件文が存在する場合、すなわち入力値が存在する場合
 			if (!conditionList.isEmpty()) {
 
-				//WHEREとANDの挿入に利用
+				// 条件文の番号
+				// WHEREとANDの挿入に利用
 				int counter = 1;
 
-				//条件格納リストの要素の数だけループ
+				//条件格納リストの要素、すなわち条件文の数だけループ
 				for (String condition : conditionList) {
 
 					//最初だけWHEREを入れる
 					if (counter == 1) {
 						str += " WHERE ";
 					}
-					
+
 					//条件式をSQL文に追加
 					str += condition;
 
-					//条件式の間にANDを挿入
+					// SQL文の最後にANDが追加されるのを防ぐためのif文
+					// 最後の条件文ではない場合
 					if (counter < conditionList.size()) {
+						
+						//条件式の最後にANDを追加
 						str += " AND ";
 					}
-
+					
+					// 条件文番号を１繰り上げ
 					counter++;
 
 				}
@@ -221,7 +232,7 @@ public class MemberDao extends BaseDao {
 			//SQL文をコンパイル用変数に代入
 			String sql = str;
 
-			//【エラーチェック用】
+			//【エラーチェック用】作成したSQL文を確認可能
 			System.out.println(sql);
 
 			//SQL文のコンパイル
@@ -243,14 +254,14 @@ public class MemberDao extends BaseDao {
 				}
 			}
 
-			// SQLの実行
 			rs = ps.executeQuery();
 
-			// 検索結果から注文番号を取得してリストに格納
 			while (rs.next()) {
-
+				
+				// 検索結果から注文番号を取得
 				String order_no_value = rs.getString("order_no"); //注文番号 orderテーブル
-
+				
+				// 注文番号をリストに追加
 				OrderNoList.add(order_no_value);
 
 			}
@@ -264,17 +275,17 @@ public class MemberDao extends BaseDao {
 		//　注文番号リスト内の重複する値(注文番号)を1つにする
 		List<String> OrderNoListMerge = new ArrayList<String>(new LinkedHashSet<>(OrderNoList));
 
-		// 注文番号リストを返却
+		// 注文番号格納リストを返却
 		return OrderNoListMerge;
 
 	}
 
 	/**
 	 * 2つのテーブル(order, member)を結合させ、
-	 * 引数で受け取った注文番号リストの各注文番号で検索し、注文番号ごとの購入情報を取得する
+	 * 引数で受け取った注文番号リストの各注文番号で検索し、注文番号ごとの売上情報を取得するメソッド
 	 * 検索結果が0件の場合は空のリストを返却
 	 * @return 売上情報の入ったリスト
-	 * @throws MembershipException 検索失敗の際に発生
+	 * @throws SalesSystemException 検索失敗の際に発生
 	 **/
 	public List<SalesInformation> findOrder(List<String> OrderNoList) throws SalesSystemException {
 
@@ -283,22 +294,21 @@ public class MemberDao extends BaseDao {
 
 		try {
 
-			//注文番号の数だけ処理する
+			//注文番号の数だけ処理
 			for (String OrderNo : OrderNoList) {
-
+				
+				// SQL文
+				// 注文番号をもとに売上情報を検索
 				String sql = "SELECT * FROM `order` "
 						+ "INNER JOIN `member` ON `order`.member_id = `member`.user_id "
 						+ "WHERE `order`.order_no = ?";
 
-				//SQL文のコンパイル
 				ps = con.prepareStatement(sql);
 
 				ps.setString(1, OrderNo);
 
-				// SQLの実行
 				rs = ps.executeQuery();
 
-				// 検索結果から売上情報の各項目を取得してリストに格納
 				while (rs.next()) {
 
 					String order_no_value = rs.getString("order_no"); //注文番号 orderテーブル
@@ -313,7 +323,8 @@ public class MemberDao extends BaseDao {
 					SalesInformation orderinfo = new SalesInformation(order_no_value, order_date_value, member_id_value,
 							user_name_value, payment_method_value, total_amount_value, delivery_date_value,
 							remarks_value);
-
+					
+					// 売上情報を売上情報格納リストに追加
 					OrderList.add(orderinfo);
 
 				}
@@ -327,10 +338,16 @@ public class MemberDao extends BaseDao {
 		return OrderList;
 
 	}
-
+	
+	/**
+	 * 引数で受け取った注文番号リストの各注文番号で検索し、注文番号ごとの売上詳細情報を取得するメソッド
+	 * 検索結果が0件の場合は空のリストを返却
+	 * @return 売上詳細情報の入ったリスト
+	 * @throws SalesSystemException 検索失敗の際に発生
+	 **/
 	public HashMap<String, List<SalesInformation>> findOrder_Detail(List<String> OrderNoList)
 			throws SalesSystemException {
-		
+
 		// 注文番号をキー、注文詳細情報を値にして格納するハッシュマップ
 		HashMap<String, List<SalesInformation>> hashmap = new HashMap<>();
 
@@ -339,21 +356,19 @@ public class MemberDao extends BaseDao {
 			for (String Order : OrderNoList) {
 
 				//初期化
-				// 売上情報を格納するリスト
+				// 売上詳細情報を格納するリスト
 				ArrayList<SalesInformation> OrderDetailList = new ArrayList<>();
 
-				//注文番号から売上詳細情報を取得するためのSQL文
+				// SQL文
+				//注文番号から売上詳細情報を取得
 				String sql = "SELECT * FROM order_detail WHERE order_no = ?";
 
-				//SQL文のコンパイル
 				ps = con.prepareStatement(sql);
 
 				ps.setString(1, Order);
 
-				// SQLの実行
 				rs = ps.executeQuery();
 
-				// 検索結果から会員情報の各項目を取得してリストに格納
 				while (rs.next()) {
 
 					//売上詳細情報
@@ -367,7 +382,8 @@ public class MemberDao extends BaseDao {
 					SalesInformation orderinfo = new SalesInformation(row_no_value, item_cd_value, item_name_value,
 							unit_price_value, quantity_value,
 							subtotal_value);
-
+					
+					// 検索結果の会員情報をリストに追加
 					OrderDetailList.add(orderinfo);
 
 					//注文番号をキー、売上詳細情報リストを値にして格納
@@ -380,8 +396,46 @@ public class MemberDao extends BaseDao {
 			throw new SalesSystemException("売上情報の取得に失敗しました");
 		}
 
-		// 売上情報格納変数を返却
+		// 売上情報を格納したHashMapを返却
 		return hashmap;
+
+	}
+	
+	/**
+	 * 入力された新規登録する商品の情報をDBへ登録するメソッド
+	 * @throws SalesSystemException 検索失敗の際に発生
+	 **/
+	public void InsertItemInfo(SalesInformation iteminfo)
+			throws SalesSystemException {
+
+		String item_name = iteminfo.getItem_Name();
+		String product_category = iteminfo.getProduct_Category();
+		String price = iteminfo.getPrice();
+		String description = iteminfo.getDescription();
+		String regist_date = LocalDateTime.now().toString();
+
+		try {
+			
+			// SQL文
+			// 商品情報をDBへ新規登録
+			String sql = "INSERT INTO m_item "
+					+ "(item_name, product_category, price, description, regist_date)"
+					+ "VALUES (?, ?, ?, ?, ?)";
+
+			ps = con.prepareStatement(sql);
+
+			ps.setString(1, item_name);
+			ps.setString(2, product_category);
+			ps.setString(3, price);
+			ps.setString(4, description);
+			ps.setString(5, regist_date);
+
+			ps.executeUpdate();
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+			throw new SalesSystemException("商品情報の登録に失敗しました");
+		}
 
 	}
 

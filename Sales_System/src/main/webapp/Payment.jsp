@@ -113,8 +113,15 @@
 							合計金額：￥<span class="fs-2 fw-bold" id="Total"></span>
 						</p>
 						<!-- 会員ID -->
-						会員ID：<input type="text" name="member_id" placeholder="会員IDを入力"
-							required></input><br>
+						<p>
+							会員ID：<input type="text" name="member_id"
+								value="<%=(String) session.getAttribute("user_id")%>"
+								readonly></input>
+						</p>
+						<!-- ユーザー名 -->
+						<p>
+							ユーザー名：<%=(String) session.getAttribute("user_name")%>
+						</p>
 						<!-- 決済方法 -->
 						決済方法：<select name="payment_method" id="payment_method"
 							style="margin: 5px; padding: 5px;">
@@ -130,8 +137,7 @@
 							<button class="btn btn-warning btn-form display-4 fw-bold"
 								style="border: 2px solid black;" onclick="deleteItemInfo()">注文確定</button>
 						</h4>
-					</div>
-			</form>
+					</div></form>
 			<%
 			}
 			%>
@@ -149,6 +155,7 @@
 
 		//セッションに保存されているデータを削除
 		function deleteItemInfo() {
+			confirm("購入を確定しますか？");
 			for (let i = 1; i <= 4; i++) {
 				sessionStorage.removeItem('quantity:' + i);
 				sessionStorage.removeItem('item_name:' + i);

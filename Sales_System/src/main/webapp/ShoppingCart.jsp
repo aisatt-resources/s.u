@@ -8,16 +8,20 @@
 <jsp:include page="common/ShoppingPage_header.jsp" />
 </head>
 <body>
-	<!-- ロゴの表示・検索フォーム・カートへの遷移ボタン -->
-	<jsp:include page="common/navi.jsp" />
-	<h2>カート内の商品</h2>
-	<!-- カート内が空の場合にメッセージが表示される。 -->
-	<div class="fs-4 fw-bold" id="emptyMessage" style="color: red;"></div>
-	<!-- 商品リスト -->
-	<section class="py-5" id="display">
-		<!-- 商品陳列部分 -->
-		<div class="container" id="itemList">
-			<script>
+	<header>
+		<!-- ロゴの表示・検索フォーム・カートへの遷移ボタン -->
+		<jsp:include page="common/navi.jsp" />
+	</header>
+	<main
+		style="min-height: 100vh; position: relative; padding-bottom: 120px; box-sizing: border-box;">
+		<h2>カート内の商品</h2>
+		<!-- カート内が空の場合にメッセージが表示される。 -->
+		<div class="fs-4 fw-bold" id="emptyMessage" style="color: red;"></div>
+		<!-- 商品リスト -->
+		<section class="py-5" id="display">
+			<!-- 商品陳列部分 -->
+			<div class="container" id="itemList">
+				<script>
 			var k = 0;
 			var j = 0;
 			const quantity = [];
@@ -34,43 +38,42 @@
 			const upbutton = [];
 			const deleteItemButton = [];
 			</script>
-			<%
+				<%
 			for (int i = 1; i <= 4; i++) {
 			%>
-			<div class="row justify-content-center border border-dotted"
-				id="item<%=i%>"
-				style="border: 2px solid black; margin: 10px; padding: 10px;">
-				<!-- 画像 -->
-				<div class="col-md-2 form-group">
-					<a href="OrderServlet?item_cd=<%=i%>">  <img src=""
-						alt="リンク切れ" width="100" height="100" id="image<%=i%>">
-					</a>
+				<div class="row justify-content-center border border-dotted"
+					id="item<%=i%>"
+					style="border: 2px solid black; margin: 10px; padding: 10px;">
+					<!-- 画像 -->
+					<div class="col-md-2 form-group">
+						<a href="OrderServlet?item_cd=<%=i%>"> <img src="" alt="リンク切れ"
+							width="100" height="100" id="image<%=i%>">
+						</a>
+					</div>
+					<!-- 詳細 -->
+					<div class="col-md-2 form-group">
+						<!-- 商品名 -->
+						<span id="item_name<%=i%>"></span> <br>
+						<!-- 小計 -->
+						<span>小計：￥</span> <span class="fs-5 fw-bold" id="subTotal<%=i%>">***小計を表示***</span>
+					</div>
+					<!-- 数量カウンター -->
+					<div class="col-md-2 form-group" id="counter">
+						<button type="button" id="minus<%=i%>">－</button>
+						<input type="text" pattern="[0-9]*" min="1" max="99" value="0"
+							class="quantity" name="quantity" id="quantity<%=i%>" size="1">
+						<button type="button" id="plus<%=i%>">＋</button>
+						<br> <br>
+					</div>
+					<!-- 削除ボタン -->
+					<div class="col-md-3">
+						<button class="btn btn-sm btn-outline-danger"
+							id="deleteItemButton<%=i%>">
+							<i class="bi bi-trash"></i>
+						</button>
+					</div>
 				</div>
-				<!-- 詳細 -->
-				<div class="col-md-2 form-group">
-					<!-- 商品名 -->
-					<span id="item_name<%=i%>"></span> <br>
-					<!-- 小計 -->
-					<span>小計：￥</span>
-					<span class="fs-5 fw-bold" id="subTotal<%=i%>">***小計を表示***</span>
-				</div>
-				<!-- 数量カウンター -->
-				<div class="col-md-2 form-group" id="counter">
-					<button type="button" id="minus<%=i%>">－</button>
-					<input type="text" pattern="[0-9]*" min="1" max="99" value="0"
-						class="quantity" name="quantity" id="quantity<%=i%>" size="1">
-					<button type="button" id="plus<%=i%>">＋</button>
-					<br> <br>
-				</div>
-				<!-- 削除ボタン -->
-				<div class="col-md-3">
-					<button class="btn btn-sm btn-outline-danger"
-						id="deleteItemButton<%=i%>">
-						<i class="bi bi-trash"></i>
-					</button>
-				</div>
-			</div>
-			<script>
+				<script>
 			quantity.push(sessionStorage.getItem('quantity:'+(k+1)));
 			item_name.push(sessionStorage.getItem('item_name:'+(k+1)));
 			item_cd.push(sessionStorage.getItem('item_cd:'+(k+1)));
@@ -106,27 +109,27 @@
 
 			k++;
 			</script>
-			<%
+				<%
 			}
 			%>
-		</div>
-		<div class="container">
-			<div class="row justify-content-center">
-				<!-- 合計金額 -->
-				<div class="col-md-3">
-					<p>
-						<u>合計金額：￥<span class="fs-3 fw-bold" id="Total"></span></u>
-					</p>
-					<!-- 購入ボタン -->
-					<button class="btn btn-warning btn-form display-4">
-						<!-- 最終購入画面へ遷移(Payment.jsp) -->
-						<a class="navbar-brand" href="Payment.jsp" onclick="Verified()">購入する</a>
-					</button>
+			</div>
+			<div class="container">
+				<div class="row justify-content-center">
+					<!-- 合計金額 -->
+					<div class="col-md-3">
+						<p>
+							<u>合計金額：￥<span class="fs-3 fw-bold" id="Total"></span></u>
+						</p>
+						<!-- 購入ボタン -->
+						<button class="btn btn-warning btn-form display-4">
+							<!-- 最終購入画面へ遷移(Payment.jsp) -->
+							<a class="navbar-brand" href="Payment.jsp" onclick="Verified()">購入する</a>
+						</button>
+					</div>
 				</div>
 			</div>
-		</div>
-	</section>
-	<script>
+		</section>
+		<script>
 	if(j==4){
 		document.getElementById("emptyMessage").innerHTML = "カート内に商品はありません。";
 		document.getElementById("display").remove();
@@ -224,7 +227,10 @@
 		}
 	
 	</script>
-	<!-- 共通パーツ（フッター） -->
-	<jsp:include page="common/footer.jsp" />
+	</main>
+	<footer>
+		<!-- 共通パーツ（フッター） -->
+		<jsp:include page="common/footer.jsp" />
+	</footer>
 </body>
 </html>

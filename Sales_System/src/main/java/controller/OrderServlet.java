@@ -15,21 +15,18 @@ import exception.SalesSystemException;
 import model.OrderInformation;
 
 /**
- * 検索画面のサーブレットクラス
+ * 注文画面のサーブレットクラス
  */
 @WebServlet("/OrderServlet")
 public class OrderServlet extends HttpServlet {
 	
-	// Register.jspから商品コードと購入数量を受け取り、カート情報へ追加する
+	// Register.jspにメッセージを返却する
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 
-		// 商品コードと購入数量を取得
 		request.setCharacterEncoding("UTF-8");
-		//String item_cd = request.getParameter("item_cd");
-		//String quantity = request.getParameter("quantity");
 		
-		String message= "カートに追加しました。";
+		String message = "カートに追加しました。";
 		request.setAttribute("message", message);
 		
 		String nextPage = "Order.jsp";
@@ -52,6 +49,8 @@ public class OrderServlet extends HttpServlet {
 			
 			CustomerDao customerDao = new CustomerDao();
 			OrderInformation orderinfo = new OrderInformation(item_cd);
+			
+			//getterで商品コードを取得
 			item_cd = orderinfo.getItem_Cd();
 			
 			//商品コードから商品名(item_name)と単価(price)をHashMapで取得
