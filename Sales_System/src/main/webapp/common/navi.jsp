@@ -11,7 +11,7 @@
 		<div class="nav-item dropdown">
 			<a class="btn btn-secondary dropdown-toggle" href="#" role="button"
 				data-bs-toggle="dropdown" aria-expanded="false">language</a>
-			<ul class="dropdown-menu">
+			<ul class="dropdown-menu" id="language">
 				<li><a class="dropdown-item" href="#" onclick="Message();">Japanese</a></li>
 				<li><a class="dropdown-item" href="#" onclick="Message();">English</a></li>
 				<li><a class="dropdown-item" href="#" onclick="Message();">French</a></li>
@@ -27,25 +27,23 @@
 		<ul class="navbar-nav ml-auto">
 			<li><a class="nav-link" href="ShoppingCart.jsp"><span
 					class="fs-6">🛒</span><br>カート</a></li>
-			<li><a class="nav-link" href=""><span class="fs-6">📄</span><br>購入履歴</span></a></li>
-			<li>
-				<%
-				String user_name = (String) session.getAttribute("user_name");
-				if (user_name != null) {
-				%> 
-				<a class="nav-link" onclick="Logout()">
-				<div style="text-align:center;">
-				<i class="bi bi-box-arrow-right"></i><br>
-				</div>
-				<%=user_name%> 
-				<%
-				} else {
-				%> 
-				<a class="nav-link" href="Login.jsp"><span>👤</span> <br>
-				ログイン
-				<%}%> 
-				</a>
-			</li>
+			<%
+			String user_name = (String) session.getAttribute("user_name");
+			if (user_name != null) {
+			%>
+			<li><a class="nav-link" href="SearchServlet"><span class="fs-6">📄</span><br>購入履歴</span></a></li>
+			<li><a class="nav-link" onclick="Logout()">
+					<div style="text-align: center;">
+						<i class="bi bi-box-arrow-right"></i><br>
+					</div> <%=user_name%></li>
+			<%
+			} else {
+			%>
+			<li><a class="nav-link" href="Login.jsp"><span>👤</span> <br>
+					ログイン </a></li>
+			<%
+			}
+			%>
 		</ul>
 	</div>
 	<!-- CSS（bootstrap）の読み込み ※これがないとドロップダウンが有効化されない-->
@@ -64,10 +62,10 @@
 		function Message() {
 			alert("まだこの機能はありません。");
 		}
-		function Logout(){
-			if(confirm("ログアウトしますか？")){
+		function Logout() {
+			if (confirm("ログアウトしますか？")) {
 				location.href = "LoginServlet";
-			} else{
+			} else {
 			}
 		}
 	</script>

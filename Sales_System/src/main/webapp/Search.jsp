@@ -19,10 +19,10 @@
 		<!-- 検索への遷移ボタン -->
 		<jsp:include page="common/Ad_navi.jsp" />
 	</header>
-	<main style="font-size: 12px;">
+	<main class="fw-bold" style="font-size: 12px;">
 		<p>
 			<br>
-		<h4 style="text-align: center;">＊＊＊＊＊商品検索＊＊＊＊＊</h4>
+		<h4 style="text-align: center;">＊＊＊＊＊売上検索＊＊＊＊＊</h4>
 		<!-- 検索条件 -->
 		<section class="py-5">
 			<div class="container">
@@ -146,15 +146,15 @@
 
 							//拡張for文
 							for (SalesInformation orderinfo : OrderList) {
-								if (order_count == Integer.parseInt(orderinfo.getOrder_No())) {
-							continue;
-								}
+								//if (order_count == Integer.parseInt(orderinfo.getOrder_No())) {
+							//continue;
+								//}
 								order_count++;
 						%>
-
 						<tr class="table-success">
+							<!-- 注文番号 --> 
 							<td>
-								<!-- 注文番号 --> <%=orderinfo.getOrder_No()%>
+								<%=orderinfo.getOrder_No()%>
 							</td>
 							<!-- 注文日 -->
 							<td>
@@ -166,17 +166,19 @@
 							<!-- 会員ID：ユーザー名 -->
 							<td><%=orderinfo.getMember_Id()%>: <%=orderinfo.getUser_Name()%></td>
 							<td>
-								<!-- 支払方法 --> <%
- if (orderinfo.getPayment_Method() != null && orderinfo.getPayment_Method().equals("0")) {
- %> 代引き <%
- } else if (orderinfo.getPayment_Method() != null && orderinfo.getPayment_Method().equals("1")) {
- %> クレジット <%
- } else if (orderinfo.getPayment_Method() != null && orderinfo.getPayment_Method().equals("2")) {
- %> 現金 <%
- } else {
-
- }
- %>
+								<!-- 支払方法 --> 
+								<%
+								if (orderinfo.getPayment_Method() != null && orderinfo.getPayment_Method().equals("0")) {
+								%> 代引き 
+								<%
+								} else if (orderinfo.getPayment_Method() != null && orderinfo.getPayment_Method().equals("1")) {
+								%> クレジット 
+								<%
+								} else if (orderinfo.getPayment_Method() != null && orderinfo.getPayment_Method().equals("2")) {
+								%> 現金 
+								<%
+								} else {}
+								%>
 							</td>
 							<!-- 税込合計金額 -->
 							<td>￥<%=(int) (Integer.parseInt(orderinfo.getTotal_Amount()) * 1.1)%>
@@ -189,36 +191,40 @@
 							sum_Total_Tax += Integer.parseInt(orderinfo.getTotal_Amount()) * 0.1;
 							%>
 							<td>
-								<!-- 納品済or未納 --> <%
- if (orderinfo.getDelivery_Date() != null) {
- %> 済 <%
- } else {
- %> 未納 <%
- }
- %>
+								<!-- 納品済or未納 -->
+								<%if(orderinfo.getDelivery_Date() != null){%> 
+								済 
+								<%} else {%> 
+								未納 
+								<%}%>
 							</td>
 							<!-- 備考 -->
 							<td><%=orderinfo.getRemarks()%></td>
 						</tr>
+						<tr></tr>
 						<tr>
 							<td colspan="3"></td>
-							<td colspan="1">購入内訳</td>
+							<td colspan="1" style="text-align:right;">購入内訳：</td>
 							<td colspan="3" class="table-danger">
 								<%
 								List<SalesInformation> OrderDetail = OrderDetailHashMap.get(orderinfo.getOrder_No());
-								%> <%
- int i = 0;
- for (SalesInformation order_detail_info : OrderDetail) {
- %> <!-- 注文行番号 --> <%=i + 1%> <%
- i++;
- %>、 <!-- 商品名 --> <%=order_detail_info.getItem_Name()%> <!-- 商品コード --> [<%=order_detail_info.getItem_Cd()%>]
-								<!-- 単価 --> ￥<%=order_detail_info.getUnit_Price()%>、 <!-- 数量 -->
-								<%=order_detail_info.getQuantity()%>個 <!-- 小計 --> 小計：￥<%=order_detail_info.getSubtotal()%>
-								<br> <%
- }
- %>
+								%>
+								<%
+								int i = 0;
+								for(SalesInformation order_detail_info : OrderDetail){%> 
+								<!-- 注文行番号 --> <%=i + 1%>. <%i++;%>
+								<!-- 商品名 --> <%=order_detail_info.getItem_Name()%>
+								<!-- 商品コード --> [商品コード：<%=order_detail_info.getItem_Cd()%>]
+								<!-- 単価 --> ￥<%=order_detail_info.getUnit_Price()%>、
+								<!-- 数量 --><%=order_detail_info.getQuantity()%>点
+								<!-- 小計 --> 小計：￥<%=order_detail_info.getSubtotal()%>
+								<br> 
+								<%
+								}
+								%>
 							</td>
 						</tr>
+						<tr><td></td></tr>
 						<%
 						}
 						%>

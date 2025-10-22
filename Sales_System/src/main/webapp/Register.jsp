@@ -12,10 +12,10 @@
 	<jsp:include page="common/Ad_navi.jsp" />
 	<p>
 		<br>
-	<h3 style="text-align: center;">＊＊＊商品登録＊＊＊</h3>
+	<h4 style="text-align: center;">＊＊＊商品登録＊＊＊</h4>
 	</p>
 	<!-- 商品リスト -->
-	<section class="py-5">
+	<section class="py-5" style="font-size:12px;">
 		<%
 		if (request.getAttribute("message") != null) {
 		%>

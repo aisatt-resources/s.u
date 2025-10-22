@@ -7,7 +7,7 @@
 		<div class="fs-5 fw-bold" style="color:red; border: 2px solid;">管理者画面</div>
 		<ul class="navbar-nav ml-auto">
 			<li><a class="nav-link rounded-pill" href="Search.jsp"><span
-					class="fs-6 fw-bold">商品検索</span></a></li>
+					class="fs-6 fw-bold">売上検索</span></a></li>
 			<li><a class="nav-link" href="Register.jsp"><span
 					class="fs-6 fw-bold">商品登録</span></a></li>
 			<li><a class="nav-link" href="SearchMember.jsp"><span

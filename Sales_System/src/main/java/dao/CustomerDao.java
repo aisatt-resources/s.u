@@ -149,7 +149,10 @@ public class CustomerDao extends BaseDao {
 			for (int i = 0; i < 4; i++) {
 				System.out.println(item_cd_list[i]);
 			}
-
+			
+			//
+			String[] item_name_list = new String[4];
+			
 			//税抜金額を格納する配列
 			int[] amount = new int[4];
 
@@ -158,9 +161,18 @@ public class CustomerDao extends BaseDao {
 
 			//税抜販売価格を格納する配列
 			int[] price = new int[4];
+			
+			//消費税率
+			int[] tax_rate = new int[4];
+			
+			//明細消費税
+			int[] tax_amount = new int[4];
 
 			//税抜単価を格納する配列
 			int[] unit_price = new int[4];
+			
+			//小計
+			int[] subtotal = new int[4];
 
 			//注文行番号を格納する変数
 			int row_no = 1;
@@ -175,7 +187,9 @@ public class CustomerDao extends BaseDao {
 				
 				//SQL文
 				//税抜販売価格を取得
-				sql = "SELECT price FROM m_item WHERE item_cd=?";
+				sql = "SELECT * FROM m_item "
+						+ "INNER JOIN m_product_category ON m_item.product_category = m_product_category.id "
+						+ "WHERE item_cd=?";
 				
 				ps = con.prepareStatement(sql);
 				ps.setString(1, item_cd_list[i]);
@@ -185,8 +199,14 @@ public class CustomerDao extends BaseDao {
 
 				while (rs.next()) {
 					
-					// 検索結果から商品情報の税抜販売価格を取得して格納
+					// 検索結果から商品名を取得して格納
+					item_name_list[i] = rs.getString("item_name");
+					
+					// 検索結果から税抜販売価格を取得して格納
 					price[i] = rs.getInt("price");
+					
+					// 検索結果から消費税率を取得して格納
+					tax_rate[i] = rs.getInt("tax_rate");
 					
 					//【エラーチェック】税抜販売価格を確認可能
 					System.out.println(price[i]);
@@ -197,23 +217,33 @@ public class CustomerDao extends BaseDao {
 
 				//税抜金額に税抜販売価格と個数の積を格納
 				amount[i] = price[i] * Integer.parseInt(quantity_list[i]);
+				
+				//明細消費税
+				tax_amount[i] = (int)Math.ceil(amount[i] * tax_rate[i] / 100); 
+				
+				//小計
+				subtotal[i] = amount[i] + tax_amount[i];
 
-				//合計金額
+				//税抜合計金額
 				total_amount += amount[i];
 				
 				//SQL文
 				//order_detailテーブルに売上詳細情報を登録
 				sql = "INSERT INTO order_detail "
-						+ "(order_no, row_no, item_cd, quantity, unit_price, amount) "
-						+ "VALUES (?,?,?,?,?,?)";
+						+ "(order_no, row_no, item_cd, item_name, quantity, unit_price, amount, tax_rate, tax_amount, subtotal) "
+						+ "VALUES (?,?,?,?,?,?,?,?,?,?)";
 
 				ps = con.prepareStatement(sql);
 				ps.setInt(1, order_no);
 				ps.setInt(2, row_no);
 				ps.setString(3, item_cd_list[i]);
-				ps.setString(4, quantity_list[i]);
-				ps.setInt(5, unit_price[i]);
-				ps.setInt(6, amount[i]);
+				ps.setString(4, item_name_list[i]);
+				ps.setString(5, quantity_list[i]);
+				ps.setInt(6, unit_price[i]);
+				ps.setInt(7, amount[i]);
+				ps.setInt(8, tax_rate[i]);
+				ps.setInt(9, tax_amount[i]);
+				ps.setInt(10, subtotal[i]);
 				ps.executeUpdate();
 				
 				//注文行番号を１繰り上げ
@@ -224,8 +254,8 @@ public class CustomerDao extends BaseDao {
 			//SQL文
 			//orderテーブルに売上情報を登録
 			sql = "INSERT INTO `order` (order_no, member_id, order_date, total_amount, "
-					+ "payment_method, delivery_date, remarks, "
-					+ "regist_datetime) VALUES (?,?,?,?,?,?,?,?)";
+					+ "payment_method, delivery_date, order_status, remarks, "
+					+ "regist_datetime) VALUES (?,?,?,?,?,?,0,?,?)";
 			
 			ps = con.prepareStatement(sql);
 			ps.setInt(1, order_no);

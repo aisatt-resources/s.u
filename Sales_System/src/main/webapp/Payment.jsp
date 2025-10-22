@@ -107,16 +107,26 @@
 				<%
 				}
 				%>
-				<div class="row justify-content-center">
-					<div class="col-md-3">
+				<div class="row justify-content-center" style="text-align:center;">
+					<div class="col-md">
 						<p>
 							合計金額：￥<span class="fs-2 fw-bold" id="Total"></span>
 						</p>
+						<%
+						if (session.getAttribute("user_id") == null) {
+						%>
+						<p><a href="Login.jsp">ログイン</a>してください。</p>
+						<div>
+							会員登録はお済みですか？ <br> <a href="RegistMember.jsp">無料会員登録</a>
+						</div>
+						</p>
+						<%
+						} else {
+						%>
 						<!-- 会員ID -->
 						<p>
 							会員ID：<input type="text" name="member_id"
-								value="<%=(String) session.getAttribute("user_id")%>"
-								readonly></input>
+								value="<%=(String) session.getAttribute("user_id")%>" readonly></input>
 						</p>
 						<!-- ユーザー名 -->
 						<p>
@@ -137,7 +147,12 @@
 							<button class="btn btn-warning btn-form display-4 fw-bold"
 								style="border: 2px solid black;" onclick="deleteItemInfo()">注文確定</button>
 						</h4>
-					</div></form>
+						<%
+						}
+						%>
+					</div>
+				</div>
+			</form>
 			<%
 			}
 			%>
