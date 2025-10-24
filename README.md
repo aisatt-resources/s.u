@@ -41,6 +41,8 @@
 - **スクリーンショット:**  
   - 売上検索画面
   ![売上検索画面](docs/images/Sales_System_Search.png)
+  - ログイン画面
+  ![ログイン画面](docs/images/Sales_System_Login.png)
   - 商品注文画面
   ![商品注文画面](docs/images/Sales_System_Top.png)
 ---
