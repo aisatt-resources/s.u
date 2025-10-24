@@ -50,6 +50,9 @@ public class LoginServlet extends HttpServlet {
 				//ユーザーIDをリクエストスコープにセット
 				session.setAttribute("user_id", user_id);
 				
+				//ログイン状態をリクエストスコープにセット
+				session.setAttribute("LoginStatus", "Login");
+				
 				message = "こんにちは、" + result + "さん！";
 				
 				// トップ画面へ遷移する準備
@@ -91,15 +94,18 @@ public class LoginServlet extends HttpServlet {
 		throws ServletException, IOException {
 
 		// セッションの情報を破棄
-		HttpSession session = request.getSession(false);
+		HttpSession session = request.getSession();
 		session.invalidate();
-
+		
+		//ログイン状態をリクエストスコープにセット
+		request.getSession().setAttribute("LoginStatus", "Logout");
+		
 		// login.jspに表示するメッセージをセット
-		request.setAttribute("message", "ログアウトしました");
-
+		request.getSession().setAttribute("LogoutMessage", "ログアウトしました");
+		response.sendRedirect("Login.jsp");
 		// login.jspを表示
-		RequestDispatcher requestDispatcher = request.getRequestDispatcher("Login.jsp");
-		requestDispatcher.forward(request, response);
+		//RequestDispatcher requestDispatcher = request.getRequestDispatcher("Login.jsp");
+		//requestDispatcher.forward(request, response);
 	}
 
 }

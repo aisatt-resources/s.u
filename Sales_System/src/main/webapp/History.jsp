@@ -8,6 +8,7 @@
 <%@ page import="java.sql.Timestamp"%>
 <%@ page import="java.util.HashMap"%>
 
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -15,9 +16,14 @@
 <jsp:include page="common/ShoppingPage_header.jsp" />
 </head>
 <body>
+	<% 
+	HttpSession statusSession = request.getSession();
+	String str = (String) statusSession.getAttribute("LoginStatus");
+   if(str.equals("Logout")){%>
+   <script>location.href = 'Login.jsp';</script>
+   <%}%>
 	<!-- ロゴの表示・検索フォーム・カートへの遷移ボタン -->
 	<jsp:include page="common/navi.jsp" />
-
 	<%
 	if (request.getAttribute("message") != null) {
 	%>
@@ -124,18 +130,13 @@
 						<td colspan="3" class="table">
 							<%
 							List<SalesInformation> OrderDetail = OrderDetailHashMap.get(orderinfo.getOrder_No());
-							%> 
-							<%
+							%> <%
 							int i = 0;
 							for (SalesInformation order_detail_info : OrderDetail) {
-							%> 
-							<!-- 注文行番号 --> <%=i + 1%>. <%i++;%> 
-							<!-- 商品名 --> <%=order_detail_info.getItem_Name()%>
-							<!-- 商品コード --> [商品コード：<%=order_detail_info.getItem_Cd()%>] 
-							<!-- 単価 -->￥<%=order_detail_info.getUnit_Price()%>、 
-							<!-- 数量 --><%=order_detail_info.getQuantity()%>点
-							<!-- 小計 --> 小計：￥<%=order_detail_info.getSubtotal()%> <br> 
-							<%
+							%> <!-- 注文行番号 --> <%=i + 1%>. <%i++;%> <!-- 商品名 --> <%=order_detail_info.getItem_Name()%>
+							<!-- 商品コード --> [商品コード：<%=order_detail_info.getItem_Cd()%>] <!-- 単価 -->￥<%=order_detail_info.getUnit_Price()%>、
+							<!-- 数量 --><%=order_detail_info.getQuantity()%>点 <!-- 小計 --> 小計：￥<%=order_detail_info.getSubtotal()%>
+							<br> <%
 							}
 							%>
 						</td>

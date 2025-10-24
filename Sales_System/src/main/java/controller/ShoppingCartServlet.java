@@ -34,7 +34,7 @@ public class ShoppingCartServlet extends HttpServlet {
 			System.out.println(item_cd_list[i]);
 			System.out.println(quantity_list[i]);
 		}
-		
+
 		//決済方法、備考、会員IDを取得
 		String payment_method = request.getParameter("payment_method");
 		String remarks = request.getParameter("remarks");
@@ -46,16 +46,17 @@ public class ShoppingCartServlet extends HttpServlet {
 
 			CustomerDao customerDao = new CustomerDao();
 
-			OrderInformation orderinfo = new OrderInformation(item_cd_list, quantity_list, payment_method, remarks, member_id);
+			OrderInformation orderinfo = new OrderInformation(item_cd_list, quantity_list, payment_method, remarks,
+					member_id);
 
 			//売上情報をDBへ登録
 			customerDao.InsertOrderInfo(orderinfo);
 
 			String message = "購入が完了しました。";
-			request.setAttribute("message", message);
-
+			
+			request.getSession().setAttribute("VerifiedMessage", message);
 			// 検索結果表示画面へ遷移する準備
-			nextPage = "Payment.jsp";
+			//nextPage = "Top.jsp";
 
 		} catch (SalesSystemException e) {
 			// エラーの場合、メッセージをSearch.jspに表示
@@ -65,12 +66,34 @@ public class ShoppingCartServlet extends HttpServlet {
 
 			// 検索結果表示画面へ遷移する準備
 			nextPage = "Payment.jsp";
+			
+			RequestDispatcher requestDispatcher = request.getRequestDispatcher(nextPage);
+			requestDispatcher.forward(request, response);
 
 		}
+		
+		response.sendRedirect("Top.jsp");
+		
+		// 次の画面に遷移
+		//RequestDispatcher requestDispatcher = request.getRequestDispatcher(nextPage);
+		//requestDispatcher.forward(request, response);
+	}
+
+	//protected void doGet(HttpServletRequest request, HttpServletResponse response)
+			//throws ServletException, IOException {
+
+		//request.setCharacterEncoding("UTF-8");
+
+		//String message = "購入が完了しました。";
+		//request.setAttribute("message", message);
+
+		// 検索結果表示画面へ遷移する準備
+		//String nextPage = "Payment.jsp";
 
 		// 次の画面に遷移
-		RequestDispatcher requestDispatcher = request.getRequestDispatcher(nextPage);
-		requestDispatcher.forward(request, response);
-	}
+		//RequestDispatcher requestDispatcher = request.getRequestDispatcher(nextPage);
+		//requestDispatcher.forward(request, response);
+
+	//}
 
 }

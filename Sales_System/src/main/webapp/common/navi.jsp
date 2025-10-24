@@ -24,18 +24,25 @@
 			</div>
 		</div>
 		<!-- カートへのリンク -->
-		<ul class="navbar-nav ml-auto">
+		<ul class="navbar-nav ml-auto" style="text-align: center;">
 			<li><a class="nav-link" href="ShoppingCart.jsp"><span
 					class="fs-6">🛒</span><br>カート</a></li>
 			<%
 			String user_name = (String) session.getAttribute("user_name");
 			if (user_name != null) {
 			%>
-			<li><a class="nav-link" href="SearchServlet"><span class="fs-6">📄</span><br>購入履歴</span></a></li>
+			<li><a class="nav-link" href="SearchServlet"><span
+					class="fs-6">📄</span><br>購入履歴</span></a></li>
 			<li><a class="nav-link" onclick="Logout()">
 					<div style="text-align: center;">
 						<i class="bi bi-box-arrow-right"></i><br>
-					</div> <%=user_name%></li>
+					</div> <%=user_name%></a></li>
+			<script>
+			setTimeout(() => {
+				alert('セッションがタイムアウトしました。ログイン画面に遷移します。');
+				location.href = 'LoginServlet';
+				}, 10 * 60 * 1000);
+			</script>
 			<%
 			} else {
 			%>
@@ -68,5 +75,13 @@
 			} else {
 			}
 		}
+		addEventListener('pageshow', () => {
+			  // キャッシュから復元された場合（ブラウザバック時など）
+			  if (event.persisted) {
+			    	location.href = "Top.jsp";
+				    } else {
+			    console.log('ページが新規に読み込まれました');
+			  }
+			});
 	</script>
 </nav>

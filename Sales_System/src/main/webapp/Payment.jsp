@@ -107,7 +107,7 @@
 				<%
 				}
 				%>
-				<div class="row justify-content-center" style="text-align:center;">
+				<div class="row justify-content-center" style="text-align: center;">
 					<div class="col-md">
 						<p>
 							合計金額：￥<span class="fs-2 fw-bold" id="Total"></span>
@@ -115,7 +115,9 @@
 						<%
 						if (session.getAttribute("user_id") == null) {
 						%>
-						<p><a href="Login.jsp">ログイン</a>してください。</p>
+						<p>
+							<a href="Login.jsp">ログイン</a>してください。
+						</p>
 						<div>
 							会員登録はお済みですか？ <br> <a href="RegistMember.jsp">無料会員登録</a>
 						</div>
@@ -145,7 +147,8 @@
 						<!-- 購入ボタン -->
 						<h4 style="margin: 20px; padding: 20px;">
 							<button class="btn btn-warning btn-form display-4 fw-bold"
-								style="border: 2px solid black;" onclick="deleteItemInfo()">注文確定</button>
+								id="verifiedButton" style="border: 2px solid black;"
+								onclick="deleteItemInfo()">注文確定</button>
 						</h4>
 						<%
 						}
@@ -168,14 +171,22 @@
 		}
 		Total_element.innerHTML = Total;
 
+		const verifiedButton = document.getElementById("verifiedButton");
+
 		//セッションに保存されているデータを削除
 		function deleteItemInfo() {
-			confirm("購入を確定しますか？");
-			for (let i = 1; i <= 4; i++) {
-				sessionStorage.removeItem('quantity:' + i);
-				sessionStorage.removeItem('item_name:' + i);
-				sessionStorage.removeItem('item_cd:' + i);
-				sessionStorage.removeItem('price:' + i);
+			if (confirm("購入を確定しますか？")) {
+				for (let i = 1; i <= 4; i++) {
+					sessionStorage.removeItem('quantity:' + i);
+					sessionStorage.removeItem('item_name:' + i);
+					sessionStorage.removeItem('item_cd:' + i);
+					sessionStorage.removeItem('price:' + i);
+				}
+				verifiedButton.type = "submit";
+			} else {
+
+				verifiedButton.type = "button";
+
 			}
 		}
 	</script>

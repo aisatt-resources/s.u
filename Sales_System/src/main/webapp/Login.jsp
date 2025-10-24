@@ -12,8 +12,30 @@
 		<!-- ロゴの表示・検索フォーム・カートへの遷移ボタン -->
 		<jsp:include page="common/navi.jsp" />
 	</header>
-	<main style="min-height: 100vh;position: relative;padding-bottom: 120px;box-sizing: border-box;">
+	<main
+		style="min-height: 100vh; position: relative; padding-bottom: 120px; box-sizing: border-box;">
 		<section class="py-5">
+			<h5 style="color: red; text-align: center;">
+				<%
+				HttpSession LogoutSession = request.getSession();
+				if (LogoutSession.getAttribute("LogoutMessage") != null) {
+				%>
+				＊＊＊<%=(String) LogoutSession.getAttribute("LogoutMessage")%>＊＊＊
+				<%
+				LogoutSession.removeAttribute("LogoutMessage");
+				%>
+				<%
+				} else {
+				}
+				%>
+				<%
+				if (request.getAttribute("message") != null) {
+				%>
+				※<%=request.getAttribute("message")%>
+				<%
+				}
+				%>
+			</h5>
 			<p>
 			<h3 style="text-align: center;">＊＊＊ログイン＊＊＊</h3>
 			</p>
@@ -24,7 +46,7 @@
 						<div class="col-md-2" style="text-align: right;">会員ID：</div>
 						<div class="col-md-5">
 							<input name="user_id" class="form-control" type="number"
-								placeholder="会員IDを入力">
+								placeholder="会員IDを入力" reauired>
 						</div>
 						</p>
 					</div>
@@ -33,18 +55,10 @@
 						<div class="col-md-2" style="text-align: right;">パスワード：</div>
 						<div class="col-md-5">
 							<input name="password" class="form-control" type="password"
-								placeholder="パスワードを入力">
+								placeholder="パスワードを入力" required>
 						</div>
 						</p>
 					</div>
-					<%
-					if (request.getAttribute("message") != null) {
-					%>
-					<h6 style="color: red; text-align: center;">
-						※<%=request.getAttribute("message")%></h6>
-					<%
-					}
-					%>
 					<div class="row justify-content-center">
 						<p>
 						<div class="col-md-2" style="text-align: center;">

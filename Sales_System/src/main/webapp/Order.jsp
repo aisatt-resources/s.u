@@ -11,19 +11,22 @@
 	<!-- ロゴの表示・検索フォーム・カートへの遷移ボタン -->
 	<jsp:include page="common/navi.jsp" />
 	<p>
-	<h3 style="border:2px solid; width: 200px; text-align:center;">カートに追加</h3>
+	<h3 style="border: 2px solid; width: 200px; text-align: center;">カートに追加</h3>
 	</p>
 	<!-- 商品リスト -->
 	<section class="py-5">
 		<%
 		if (request.getAttribute("message") != null) {
 		%>
-		<div class="row justify-content-center">
-		<h2 style="text-align: center; color: red;">
-			<%=request.getAttribute("message")%>
-		</h2>
-		<a href="Top.jsp" style="text-align:center;">
-		買い物を続ける</a>
+		<div style="text-align: center;">
+			<h2 style="text-align: center; color: red;">
+				<%=request.getAttribute("message")%>
+			</h2>
+			<br>
+			<button class="btn btn-outline-primary" onclick="location.href='Top.jsp';"
+				style="margin: 10px;">買い物を続ける</button>
+			<button class="btn btn-outline-warning"
+				onclick="location.href='ShoppingCart.jsp';" style="margin: 10px;">カートに進む</button>
 		</div>
 		<%
 		} else {
@@ -36,21 +39,22 @@
 					alt="<%=request.getAttribute("item_name")%>" width="200"
 					height="200"><br> <span id="item_name"><%=request.getAttribute("item_name")%></span>
 				<div>
-					<span class="fs-5">￥<%=request.getAttribute("price")%></span>/個</div>
+					<span class="fs-5">￥<%=request.getAttribute("price")%></span>/個
+				</div>
 				<div class="counter" id="counter" style="text-align: center;">
 					<button type="button" id="minus">－</button>
 					<input type="text" pattern="[0-9]*" min="1" max="99" value="1"
 						class="quantity" name="quantity" id="quantity" size="1">
 					<button type="button" id="plus">＋</button>
 					<div>
-					<u>
-						小計：￥<span class="fs-3" id="subTotal"><%=request.getAttribute("price")%></span></div>
-				</u>
+						<u> 小計：￥<span class="fs-3" id="subTotal"><%=request.getAttribute("price")%></span>
+					</div>
+					</u>
 				</div>
 				<br>
 				<!-- セッションへ注文データを保存し、サーブレットに処理を投げる -->
-				<button class="btn btn-warning btn-form display-4" onclick="addItem()">カートに追加</button>
-
+				<button class="btn btn-warning btn-form display-4"
+					onclick="addItem()">カートに追加</button>
 			</div>
 		</form>
 		<%

@@ -85,9 +85,9 @@ public class SearchServlet extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 
-		// 画面に入力された注文情報を取得
+		// ログインIDをセッションから取得する
 		request.setCharacterEncoding("UTF-8");
-		
+
 		HttpSession session = request.getSession();
 		String order_date_start = "";
 		String order_date_end = "";
@@ -98,36 +98,47 @@ public class SearchServlet extends HttpServlet {
 
 		String nextPage = null;
 
-		try {
-			MemberDao memberDao = new MemberDao();
-			SalesInformation orderinfo = new SalesInformation(order_date_start, order_date_end, member_id,
-					payment_method, delivery_date_flag, item_cd);
+		//ブラウザバックしてから押下されたときの対策
+		if (member_id == null) {
 			
-			// 取得した検索結果（注文番号）をリストに格納
-			List<String> OrderNoList = memberDao.findOrderNo(orderinfo);
+			nextPage = "Login.jsp";
 			
-			//購入情報ヘッダーリストを取得
-			List<SalesInformation> OrderList = memberDao.findOrder(OrderNoList);
-
-			//購入詳細リストを取得
-			HashMap<String, List<SalesInformation>> OrderDetailHashMap = memberDao.findOrder_Detail(OrderNoList);
-
-			// 取得した購入情報ヘッダーリストをリクエストスコープにセット
-			request.setAttribute("OrderList", OrderList);
-
-			// 取得した購入詳細リストをリクエストスコープにセット
-			request.setAttribute("OrderDetailHashMap", OrderDetailHashMap);
+			request.setAttribute("message", "ログインしてください。");
 			
-			nextPage = "History.jsp";
+		} else {
 
-		} catch (SalesSystemException e) {
-			// エラーの場合、メッセージをSearch.jspに表示
-			String message = e.getMessage();
-			request.setAttribute("message", message);
-			request.setAttribute("error", "true");
+			try {
+				MemberDao memberDao = new MemberDao();
+				SalesInformation orderinfo = new SalesInformation(order_date_start, order_date_end, member_id,
+						payment_method, delivery_date_flag, item_cd);
 
-			// Top画面へ遷移する準備
-			nextPage = "Top.jsp";
+				// 取得した検索結果（注文番号）をリストに格納
+				List<String> OrderNoList = memberDao.findOrderNo(orderinfo);
+
+				//購入情報ヘッダーリストを取得
+				List<SalesInformation> OrderList = memberDao.findOrder(OrderNoList);
+
+				//購入詳細リストを取得
+				HashMap<String, List<SalesInformation>> OrderDetailHashMap = memberDao.findOrder_Detail(OrderNoList);
+
+				// 取得した購入情報ヘッダーリストをリクエストスコープにセット
+				request.setAttribute("OrderList", OrderList);
+
+				// 取得した購入詳細リストをリクエストスコープにセット
+				request.setAttribute("OrderDetailHashMap", OrderDetailHashMap);
+
+				nextPage = "History.jsp";
+
+			} catch (SalesSystemException e) {
+				// エラーの場合、メッセージをSearch.jspに表示
+				String message = e.getMessage();
+				request.setAttribute("message", message);
+				request.setAttribute("error", "true");
+
+				// Top画面へ遷移する準備
+				nextPage = "Top.jsp";
+
+			}
 
 		}
 

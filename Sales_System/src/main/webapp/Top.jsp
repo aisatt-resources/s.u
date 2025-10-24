@@ -11,14 +11,28 @@
 	<!-- ロゴの表示・検索フォーム・カートへの遷移ボタン -->
 	<jsp:include page="common/navi.jsp" />
 	<h1>セール中</h1>
-	<%
-	if (request.getAttribute("message") != null) {
-	%>
-	<h6 style="color: red; text-align: center;">
-		<%=request.getAttribute("message")%></h6>
-	<%
-	}
-	%>
+	<h4 style="color: red; text-align: center;">
+		<!-- 購入完了メッセージ -->
+		<%
+		HttpSession VerifiedSession = request.getSession();
+		if (VerifiedSession.getAttribute("VerifiedMessage") != null) {
+		%>
+		＊＊＊<%=VerifiedSession.getAttribute("VerifiedMessage")%>＊＊＊
+
+		<%
+		VerifiedSession.removeAttribute("VerifiedMessage");
+		} else {
+		}
+		%>
+		<!-- その他メッセージ -->
+		<%
+		if (request.getAttribute("message") != null) {
+		%>
+		＊＊＊<%=request.getAttribute("message")%>＊＊＊
+		<%
+		}
+		%>
+	</h4>
 	<!-- 商品リスト -->
 	<section class="py-5">
 		<div class="container">

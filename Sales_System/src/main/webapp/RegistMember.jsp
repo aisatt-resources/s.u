@@ -41,7 +41,7 @@
 						</div>
 						<div class="col-md-4 form-group">
 							<input type="text" name="user_name" required
-								placeholder="ユーザー名を入力" minlength="5" maxlength="10"
+								placeholder="ユーザー名を入力" minlength="1" maxlength="10"
 								class="form-control">
 						</div>
 						</p>
