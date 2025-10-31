@@ -14,9 +14,9 @@
 	<!-- 共通パーツ（ナビ） -->
 	<jsp:include page="common/navi.jsp" />
 	<!-- 一覧表示 -->
-	<section class="py-5">
+	<section class="py-5" style="font-size: 12px;">
 		<div class="container">
-			<h1 class="my-4">会員一覧</h1>
+			<h4 class="my-4">会員一覧</h4>
 			<%
 			String message = (String) request.getAttribute("message");
 			%>
@@ -34,17 +34,16 @@
 				<!-- 見出し部分 -->
 				<thead class="thead-dark">
 					<tr>
-						<th scope="col">ユーザーID</th>
-						<th scope="col">ユーザー名</th>
-						<th scope="col">メールアドレス</th>
-						<th scope="col">電話番号</th>
-						<th scope="col">住所</th>
-						<th scope="col">生年月日</th>
-						<th scope="col">職業</th>
-						<th scope="col">登録日</th>
-						<th scope="col">更新日</th>
-						<th scope="col"></th>
-						<th scope="col"></th>
+						<th class="col-lg-1">ユーザーID</th>
+						<th class="col-lg-1">ユーザー名</th>
+						<th class="col-lg-1">メールアドレス</th>
+						<th class="col-lg-1">電話番号</th>
+						<th class="col-lg-2">住所</th>
+						<th class="col-lg-1">生年月日</th>
+						<th class="col-lg-1">職業</th>
+						<th class="col-lg-1">登録日</th>
+						<th class="col-lg-1">更新日</th>
+						<th class="col-lg-2"></th>
 					</tr>
 				</thead>
 				<!-- 一覧部分 -->
@@ -72,7 +71,7 @@
 					
 					<tr style="background-color: yellow; color: black;">
 						<%
-						    }
+						}
 						}
 						%>
 						<td><%=memberinfo.getUserId()%></td>
@@ -84,10 +83,11 @@
 						<td><%=memberinfo.getUserJob()%></td>
 						<td><%=memberinfo.getUser_Created_Datetime()%></td>
 						<td><%=memberinfo.getUser_Updated_Datetime()%></td>
-						<td><a class="btn btn-primary"
-							href="EditServlet?user_id=<%=memberinfo.getUserId()%>">編集</a></td>
-						<td><a class="btn btn-danger"
-							href="DeleteServlet?user_id=<%=memberinfo.getUserId()%>">削除</a></td>
+						<td><a class="btn btn-outline-primary"
+							href="EditServlet?user_id=<%=memberinfo.getUserId()%>"><i 
+								class="bi bi-pencil"></i></a> <a class="btn btn-outline-danger"
+							href="DeleteServlet?user_id=<%=memberinfo.getUserId()%>"><i
+								class="bi bi-trash"></i></a></td>
 					</tr>
 					<%
 					}
